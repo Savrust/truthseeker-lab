@@ -1,7 +1,9 @@
+import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { VerificationDetailDialog } from "@/components/Dialogs/VerificationDetailDialog";
 import { AlertCircle, CheckCircle2, Clock, User } from "lucide-react";
 
 // Mock verification queue data
@@ -51,6 +53,8 @@ const statusLabels = {
 };
 
 export const VerifyView = () => {
+  const [selectedItem, setSelectedItem] = useState<typeof verificationQueue[0] | null>(null);
+
   return (
     <div className="container mx-auto px-4 py-6">
       <div className="mb-6">
@@ -107,7 +111,11 @@ export const VerifyView = () => {
                         </Badge>
                       </TableCell>
                       <TableCell className="text-right">
-                        <Button variant="ghost" size="sm">
+                        <Button 
+                          variant="ghost" 
+                          size="sm"
+                          onClick={() => setSelectedItem(item)}
+                        >
                           詳細
                         </Button>
                       </TableCell>
@@ -149,6 +157,14 @@ export const VerifyView = () => {
           </CardContent>
         </Card>
       </div>
+
+      {selectedItem && (
+        <VerificationDetailDialog
+          open={!!selectedItem}
+          onOpenChange={(open) => !open && setSelectedItem(null)}
+          item={selectedItem}
+        />
+      )}
     </div>
   );
 };
