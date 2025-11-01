@@ -1,19 +1,28 @@
 import { Mail, Phone, MapPin, Facebook, Twitter, Linkedin, Instagram } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export const Footer = () => {
+  const { language, t } = useLanguage();
+
   return (
     <footer className="bg-card border-t">
       <div className="container mx-auto px-4 py-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
           {/* Company Info */}
           <div>
-            <h3 className="text-xl font-bold mb-4 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-              The Truth
-            </h3>
+            <div className="flex items-center gap-3 mb-4">
+              <img 
+                src="/9391703.png" 
+                alt="Logo" 
+                className="h-10 w-10 object-contain"
+              />
+              <h3 className={`text-xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent ${language === "en" ? "brand-font-en" : "brand-font-ja"}`}>
+                {t("header.title")}
+              </h3>
+            </div>
             <p className="text-muted-foreground mb-4">
-              Leading the way in transparent news verification and credible journalism.
-              Building trust through evidence-based reporting.
+              {t("footer.description")}
             </p>
             <div className="flex gap-3">
               <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
@@ -33,26 +42,26 @@ export const Footer = () => {
 
           {/* Quick Links */}
           <div>
-            <h4 className="font-semibold mb-4">Quick Links</h4>
+            <h4 className="font-semibold mb-4">{t("footer.quickLinks")}</h4>
             <ul className="space-y-2">
               <li>
                 <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
-                  About Us
+                  {t("footer.about")}
                 </a>
               </li>
               <li>
                 <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
-                  How It Works
+                  {t("footer.howItWorks")}
                 </a>
               </li>
               <li>
                 <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
-                  Verification Process
+                  {t("footer.verification")}
                 </a>
               </li>
               <li>
                 <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
-                  Careers
+                  {t("footer.careers")}
                 </a>
               </li>
             </ul>
@@ -60,26 +69,26 @@ export const Footer = () => {
 
           {/* Resources */}
           <div>
-            <h4 className="font-semibold mb-4">Resources</h4>
+            <h4 className="font-semibold mb-4">{t("footer.resources")}</h4>
             <ul className="space-y-2">
               <li>
                 <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
-                  Verification Guidelines
+                  {t("footer.guidelines")}
                 </a>
               </li>
               <li>
                 <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
-                  Editorial Policy
+                  {t("footer.editorial")}
                 </a>
               </li>
               <li>
                 <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
-                  Privacy Policy
+                  {t("footer.privacy")}
                 </a>
               </li>
               <li>
                 <a href="#" className="text-muted-foreground hover:text-primary transition-colors">
-                  Terms of Service
+                  {t("footer.terms")}
                 </a>
               </li>
             </ul>
@@ -87,7 +96,7 @@ export const Footer = () => {
 
           {/* Contact Info */}
           <div>
-            <h4 className="font-semibold mb-4">Contact Us</h4>
+            <h4 className="font-semibold mb-4">{t("footer.contact")}</h4>
             <ul className="space-y-3">
               <li className="flex items-start gap-2">
                 <MapPin className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
@@ -115,8 +124,8 @@ export const Footer = () => {
         <Separator className="my-8" />
 
         <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-muted-foreground">
-          <p>© 2024 The Truth. All rights reserved.</p>
-          <p>Committed to transparency, accuracy, and journalistic integrity.</p>
+          <p>{t("footer.copyright")}</p>
+          <p>{t("footer.commitment")}</p>
         </div>
       </div>
     </footer>

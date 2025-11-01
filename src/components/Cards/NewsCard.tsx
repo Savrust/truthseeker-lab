@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { VerificationBadge, VerificationLevel } from "@/components/Badges/VerificationBadge";
 import { SourceBadge } from "@/components/Badges/SourceBadge";
 import { C2PABadge } from "@/components/Badges/C2PABadge";
+import { IdeologyBadge, IdeologyData } from "@/components/Badges/IdeologyBadge";
 import { ExternalLink, Clock, TrendingUp } from "lucide-react";
 
 interface NewsCardProps {
@@ -14,6 +15,7 @@ interface NewsCardProps {
   primarySourceUrl?: string;
   timestamp: string;
   trending?: boolean;
+  ideology?: IdeologyData;
   onClick?: () => void;
 }
 
@@ -26,6 +28,7 @@ export const NewsCard = ({
   primarySourceUrl,
   timestamp,
   trending,
+  ideology,
   onClick,
 }: NewsCardProps) => {
   return (
@@ -44,6 +47,7 @@ export const NewsCard = ({
           <SourceBadge source={source} />
           <VerificationBadge level={verificationLevel} size="sm" />
           <C2PABadge verified={c2pa} />
+          {ideology && <IdeologyBadge ideology={ideology} size="sm" />}
         </div>
       </CardHeader>
 
@@ -60,7 +64,7 @@ export const NewsCard = ({
           <Button
             variant="ghost"
             size="sm"
-            className="gap-2"
+            className="gap-2 hover:bg-sky-500 hover:text-white transition-colors"
             onClick={(e) => {
               e.stopPropagation();
               window.open(primarySourceUrl, "_blank");

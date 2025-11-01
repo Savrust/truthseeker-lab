@@ -3,11 +3,15 @@ import banner1 from "@/assets/banner-1.jpg";
 import banner2 from "@/assets/banner-2.jpg";
 import banner3 from "@/assets/banner-3.jpg";
 import banner4 from "@/assets/banner-4.jpg";
+import banner5 from "@/assets/banner-5.jpg";
+import { useLanguage } from "@/contexts/LanguageContext";
 
-const banners = [banner1, banner2, banner3, banner4];
+
+const banners = [banner1, banner2, banner3, banner4, banner5];
 
 export const HeroBanner = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const { language, t } = useLanguage();
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -18,7 +22,7 @@ export const HeroBanner = () => {
   }, []);
 
   return (
-    <section className="relative w-full h-[400px] overflow-hidden">
+    <section className="relative w-full h-[600px] overflow-hidden">
       {banners.map((banner, index) => (
         <div
           key={index}
@@ -31,13 +35,13 @@ export const HeroBanner = () => {
             alt={`Banner ${index + 1}`}
             className="w-full h-full object-cover"
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-background/80 to-transparent flex items-center">
+          <div className="absolute inset-0 bg-gradient-to-r from-background/80 to-transparent flex items-start pt-24">
             <div className="container mx-auto px-4">
-              <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-4 max-w-2xl">
-                Verify the Truth
+              <h2 className={`text-4xl md:text-5xl font-bold text-foreground mb-4 max-w-2xl ${language === "en" ? "brand-font-en" : "brand-font-ja"}`}>
+                {t("banner.title")}
               </h2>
               <p className="text-lg md:text-xl text-muted-foreground max-w-xl">
-                Transparent news verification for a trustworthy information ecosystem
+                {t("banner.subtitle")}
               </p>
             </div>
           </div>

@@ -2,6 +2,7 @@ import { useEffect, useRef } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Quote } from "lucide-react";
+import { useLanguage } from "@/contexts/LanguageContext";
 import testimonial1 from "@/assets/testimonial-1.jpg";
 import testimonial2 from "@/assets/testimonial-2.jpg";
 import testimonial3 from "@/assets/testimonial-3.jpg";
@@ -16,150 +17,179 @@ import testimonial10 from "@/assets/testimonial-10.jpg";
 const testimonials = [
   {
     id: 1,
-    name: "Sarah Chen",
-    role: "Chief Editor, Global News Network",
+    name: "田中 美咲",
+    role: "主幹編集者、全国新聞社",
     image: testimonial1,
-    testimonial: "The Truth platform has revolutionized how we verify information. The transparency and comprehensive verification process gives our readers confidence in every story we publish."
+    testimonial: "The Truthプラットフォームは情報検証の方法を革新しました。透明性の高い包括的な検証プロセスにより、読者は私たちが公開するすべての記事に信頼を持つことができます。"
   },
   {
     id: 2,
-    name: "Maria Rodriguez",
-    role: "Investigative Journalist",
+    name: "佐藤 健太",
+    role: "調査報道ジャーナリスト",
     image: testimonial2,
-    testimonial: "As a journalist, having access to detailed source tracking and evidence verification has been invaluable. This platform sets a new standard for news credibility."
+    testimonial: "ジャーナリストとして、詳細なソース追跡と証拠検証機能へのアクセスは非常に貴重です。このプラットフォームはニュースの信頼性に新しい基準を設定しています。"
   },
   {
     id: 3,
-    name: "James Kim",
-    role: "Media Director, Tech Corp",
+    name: "鈴木 裕子",
+    role: "メディアディレクター、テック企業",
     image: testimonial3,
-    testimonial: "The verification queue and collaboration features have streamlined our fact-checking process significantly. It's an essential tool for maintaining journalistic integrity."
+    testimonial: "検証キューとコラボレーション機能により、ファクトチェックプロセスが大幅に効率化されました。ジャーナリズムの誠実さを維持するための必須ツールです。"
   },
   {
     id: 4,
-    name: "Priya Sharma",
-    role: "Communications Manager",
+    name: "高橋 真一",
+    role: "コミュニケーションマネージャー",
     image: testimonial4,
-    testimonial: "The timeline reconstruction feature helps us track how stories evolve and identify misinformation before it spreads. Absolutely game-changing for our team."
+    testimonial: "タイムライン再構築機能は、ストーリーの展開を追跡し、誤情報が拡散する前に特定するのに役立ちます。私たちのチームにとって画期的なツールです。"
   },
   {
     id: 5,
-    name: "Robert Thompson",
-    role: "Senior Media Analyst",
+    name: "伊藤 隆",
+    role: "シニアメディアアナリスト",
     image: testimonial5,
-    testimonial: "With decades in the industry, I can confidently say this is the most comprehensive news verification platform I've encountered. The evidence binder alone is worth it."
+    testimonial: "業界で数十年の経験を持つ私は、これが最も包括的なニュース検証プラットフォームであると自信を持って言えます。証拠バインダー機能だけでも価値があります。"
   },
   {
     id: 6,
-    name: "Layla Hassan",
-    role: "Digital Media Entrepreneur",
+    name: "渡辺 明美",
+    role: "デジタルメディア起業家",
     image: testimonial6,
-    testimonial: "The coordinated spread detection has helped us identify and stop misinformation campaigns early. This tool is crucial for maintaining trust with our audience."
+    testimonial: "協調拡散検出機能により、誤情報キャンペーンを早期に特定して阻止することができました。このツールは視聴者との信頼を維持するために不可欠です。"
   },
   {
     id: 7,
-    name: "Daniel Martinez",
-    role: "Content Strategist",
+    name: "山本 誠",
+    role: "コンテンツストラテジスト",
     image: testimonial7,
-    testimonial: "The source lens feature provides incredible insights into media reliability. It's helped us build partnerships with the most trustworthy news sources."
+    testimonial: "ソースレンズ機能は、メディアの信頼性に関する素晴らしい洞察を提供します。最も信頼できるニュースソースとのパートナーシップ構築に役立ちました。"
   },
   {
     id: 8,
-    name: "Amara Johnson",
-    role: "Professor of Journalism",
+    name: "中村 優子",
+    role: "ジャーナリズム教授",
     image: testimonial8,
-    testimonial: "I use The Truth as a teaching tool for my students. It demonstrates best practices in verification and transparency that every journalist should follow."
+    testimonial: "The Truthを学生の教材として使用しています。すべてのジャーナリストが従うべき検証と透明性のベストプラクティスを示しています。"
   },
   {
     id: 9,
-    name: "Alex Patel",
-    role: "Tech & Media Consultant",
+    name: "小林 大輔",
+    role: "テック＆メディアコンサルタント",
     image: testimonial9,
-    testimonial: "The integration of C2PA and transparency badges makes it easy for readers to understand the authenticity of content. This is the future of trusted media."
+    testimonial: "C2PAと透明性バッジの統合により、読者がコンテンツの真正性を理解しやすくなりました。これが信頼できるメディアの未来です。"
   },
   {
     id: 10,
-    name: "Sophie Anderson",
-    role: "Head of Communications",
+    name: "加藤 さくら",
+    role: "広報部長",
     image: testimonial10,
-    testimonial: "Our organization relies on The Truth for monitoring news coverage and ensuring accuracy. The expert commentary feature adds invaluable context to complex stories."
+    testimonial: "私たちの組織は、ニュース報道の監視と正確性の確保のためにThe Truthに依存しています。専門家の解説機能は複雑な記事に貴重な文脈を追加します。"
   }
 ];
 
 export const Testimonials = () => {
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const sectionRef = useRef<HTMLDivElement>(null);
+  const { t } = useLanguage();
 
   useEffect(() => {
-    const scrollContainer = scrollContainerRef.current;
-    if (!scrollContainer) return;
+    const section = sectionRef.current;
+    if (!section) return;
 
-    const handleScroll = () => {
-      const sections = scrollContainer.querySelectorAll('.testimonial-section');
-      sections.forEach((section) => {
-        const rect = section.getBoundingClientRect();
-        const isVisible = rect.top < window.innerHeight && rect.bottom > 0;
-        
-        if (isVisible) {
-          section.classList.add('animate-fade-in');
-        }
-      });
+    const observerOptions = {
+      root: null,
+      rootMargin: "0px",
+      threshold: 0.1,
     };
 
-    window.addEventListener('scroll', handleScroll);
-    handleScroll();
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("animate-fade-in-up");
+          entry.target.classList.remove("opacity-0");
+        }
+      });
+    }, observerOptions);
 
-    return () => window.removeEventListener('scroll', handleScroll);
+    observer.observe(section);
+
+    return () => {
+      observer.unobserve(section);
+    };
   }, []);
 
+  // Duplicate testimonials for seamless scrolling
+  const scrollingTestimonials = [...testimonials, ...testimonials];
+
   return (
-    <section className="py-16 bg-muted/30">
+    <div className="py-16 bg-muted/30">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold mb-4">
-            Trusted by Industry Leaders
+            {t("testimonials.title")}
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Hear from journalists, editors, and media professionals who rely on The Truth
-            for verified news and transparent information.
+            {t("testimonials.subtitle")}
           </p>
         </div>
 
-        <div ref={scrollContainerRef} className="space-y-8">
-          {testimonials.map((testimonial, index) => (
-            <div
-              key={testimonial.id}
-              className="testimonial-section opacity-0 transition-opacity duration-700"
-              style={{ transitionDelay: `${index * 100}ms` }}
+        <div
+          ref={sectionRef}
+          className="testimonial-section opacity-0 transition-opacity duration-700"
+        >
+          <div className="mb-6">
+            <h3 className="text-2xl font-semibold mb-2">
+              {t("testimonials.sectionTitle")}
+            </h3>
+            <p className="text-sm text-muted-foreground">
+              {t("testimonials.sectionDesc")}
+            </p>
+          </div>
+
+          <div className="overflow-x-hidden pb-4 relative">
+            <div 
+              className="flex gap-6 min-w-max animate-scroll-left"
+              style={{
+                width: `${(testimonials.length * 368) + (testimonials.length * 24)}px`
+              }}
             >
-              <Card className="hover:shadow-lg transition-shadow">
-                <CardContent className="p-6">
-                  <div className="flex flex-col md:flex-row gap-6 items-start">
-                    <Avatar className="h-20 w-20 flex-shrink-0">
-                      <AvatarImage src={testimonial.image} alt={testimonial.name} />
-                      <AvatarFallback>{testimonial.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
-                    </Avatar>
-                    
-                    <div className="flex-1">
-                      <Quote className="h-8 w-8 text-primary mb-3 opacity-50" />
-                      <p className="text-lg mb-4 leading-relaxed">
-                        {testimonial.testimonial}
-                      </p>
-                      <div>
-                        <p className="font-semibold text-foreground">
-                          {testimonial.name}
-                        </p>
-                        <p className="text-sm text-muted-foreground">
-                          {testimonial.role}
+              {scrollingTestimonials.map((testimonial, index) => (
+                <Card
+                  key={`testimonial-${index}`}
+                  className="w-[350px] flex-shrink-0 hover:shadow-lg hover:scale-105 transition-all duration-300"
+                >
+                  <CardContent className="p-6">
+                    <div className="flex flex-col gap-4">
+                      <div className="flex items-center gap-4">
+                        <Avatar className="h-16 w-16 flex-shrink-0">
+                          <AvatarImage src={testimonial.image} alt={testimonial.name} />
+                          <AvatarFallback>
+                            {testimonial.name.split(' ').map(n => n[0]).join('')}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div>
+                          <p className="font-semibold text-foreground">
+                            {testimonial.name}
+                          </p>
+                          <p className="text-sm text-muted-foreground">
+                            {testimonial.role}
+                          </p>
+                        </div>
+                      </div>
+                      
+                      <div className="flex-1">
+                        <Quote className="h-6 w-6 text-primary mb-2 opacity-50" />
+                        <p className="text-sm leading-relaxed">
+                          {testimonial.testimonial}
                         </p>
                       </div>
                     </div>
-                  </div>
-                </CardContent>
-              </Card>
+                  </CardContent>
+                </Card>
+              ))}
             </div>
-          ))}
+          </div>
         </div>
       </div>
-    </section>
+    </div>
   );
 };

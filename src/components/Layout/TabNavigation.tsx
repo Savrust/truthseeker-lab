@@ -1,4 +1,5 @@
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface TabNavigationProps {
   value: string;
@@ -6,6 +7,8 @@ interface TabNavigationProps {
 }
 
 export const TabNavigation = ({ value, onValueChange }: TabNavigationProps) => {
+  const { t } = useLanguage();
+
   return (
     <div className="border-b bg-background">
       <div className="container mx-auto px-4">
@@ -15,13 +18,13 @@ export const TabNavigation = ({ value, onValueChange }: TabNavigationProps) => {
               value="discover"
               className="data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none px-6"
             >
-              Discover
+              {t("tabs.discover")}
             </TabsTrigger>
             <TabsTrigger
               value="verify"
               className="data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none px-6"
             >
-              Verify
+              {t("tabs.verify")}
             </TabsTrigger>
           </TabsList>
         </Tabs>
