@@ -3,13 +3,16 @@ import { createContext, useContext, useState, ReactNode, useEffect } from "react
 interface User {
   email: string;
   password: string;
+  name?: string;
+  photo?: string; // base64 encoded image
+  dateOfBirth?: string;
 }
 
 interface AuthContextType {
   isAuthenticated: boolean;
   currentUser: string | null;
   login: (email: string, password: string) => Promise<{ success: boolean; userNotFound?: boolean }>;
-  register: (email: string, password: string) => Promise<{ success: boolean; message?: string }>;
+  register: (email: string, password: string, name?: string, photo?: string, dateOfBirth?: string) => Promise<{ success: boolean; message?: string }>;
   logout: () => void;
 }
 
@@ -66,7 +69,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const register = async (email: string, password: string): Promise<{ success: boolean; message?: string }> => {
+  const register = async (email: string, password: string, name?: string, photo?: string, dateOfBirth?: string): Promise<{ success: boolean; message?: string }> => {
     if (!email || !password) {
       return { success: false, message: "Email and password are required" };
     }
@@ -82,7 +85,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     }
 
     // Create new user
-    const newUser: User = { email, password };
+    const newUser: User = { email, password, name, photo, dateOfBirth };
     users.push(newUser);
     saveUsers(users);
     setIsAuthenticated(true);

@@ -16,7 +16,7 @@ export const HeroBanner = () => {
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentIndex((prevIndex) => (prevIndex + 1) % banners.length);
-    }, 3000);
+    }, 60000); // change image every 60s
 
     return () => clearInterval(interval);
   }, []);
@@ -40,7 +40,7 @@ export const HeroBanner = () => {
               <h2 className={`text-4xl md:text-5xl font-bold text-foreground mb-4 max-w-2xl ${language === "en" ? "brand-font-en" : "brand-font-ja"}`}>
                 {t("banner.title")}
               </h2>
-              <p className="text-lg md:text-xl text-muted-foreground max-w-xl">
+              <p className="text-lg md:text-xl text-muted-foreground max-w-xl mb-6">
                 {t("banner.subtitle")}
               </p>
             </div>
@@ -48,7 +48,7 @@ export const HeroBanner = () => {
         </div>
       ))}
       
-      <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-2">
+      {/* <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-2">
         {banners.map((_, index) => (
           <button
             key={index}
@@ -61,7 +61,7 @@ export const HeroBanner = () => {
             aria-label={`Go to banner ${index + 1}`}
           />
         ))}
-      </div>
+      </div> */}
     </section>
   );
 };

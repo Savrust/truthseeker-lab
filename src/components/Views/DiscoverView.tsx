@@ -1,4 +1,4 @@
-import { useState } from "react";
+﻿import { useState, useRef } from "react";
 import { NewsCard } from "@/components/Cards/NewsCard";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -8,14 +8,15 @@ import { KeywordTimelineView } from "@/components/Views/KeywordTimelineView";
 import { KeywordDialog } from "@/components/Dialogs/KeywordDialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
-import { Search, Lock, MoreHorizontal, X } from "lucide-react";
-import { useAuth } from "@/contexts/AuthContext";
+import { Search, Lock, MoreHorizontal, X, ChevronDown } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useFavorites } from "@/contexts/FavoritesContext";
+import { useSubscription } from "@/contexts/SubscriptionContext";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import articleImage from "@/assets/image (1).jpg";
 
 // Mock data
-const mockNews = [
+export const mockNews = [
   {
     id: "1",
     title: "マリとウクライナの断交発表：何が確定で、何が未確定か",
@@ -25,6 +26,7 @@ const mockNews = [
     c2pa: true,
     primarySourceUrl: "https://example.com/source1",
     timestamp: "2時間前",
+    imageUrl: articleImage,
     trending: true,
     ideology: { liberal: 35, neutral: 45, conservative: 20 },
     publishedDate: "2024年9月1日",
@@ -138,6 +140,7 @@ const mockNews = [
     c2pa: false,
     primarySourceUrl: "https://example.com/source2",
     timestamp: "5時間前",
+    imageUrl: articleImage,
     trending: false,
     ideology: { liberal: 40, neutral: 50, conservative: 10 },
     publishedDate: "2024年10月15日",
@@ -231,6 +234,7 @@ const mockNews = [
     verificationLevel: "unverified" as const,
     c2pa: false,
     timestamp: "1時間前",
+    imageUrl: articleImage,
     ideology: { liberal: 30, neutral: 55, conservative: 15 },
     publishedDate: "2024年11月1日",
     lastUpdated: "2024年11月1日",
@@ -316,6 +320,7 @@ const mockNews = [
     c2pa: true,
     primarySourceUrl: "https://example.com/source4",
     timestamp: "3時間前",
+    imageUrl: articleImage,
     ideology: { liberal: 25, neutral: 45, conservative: 30 },
     publishedDate: "2024年10月28日",
     lastUpdated: "2024年10月29日",
@@ -416,6 +421,7 @@ const mockNews = [
     verificationLevel: "partial" as const,
     c2pa: false,
     timestamp: "6時間前",
+    imageUrl: articleImage,
     ideology: { liberal: 45, neutral: 40, conservative: 15 },
     publishedDate: "2024年10月25日",
     lastUpdated: "2024年10月26日",
@@ -502,6 +508,7 @@ const mockNews = [
     c2pa: true,
     primarySourceUrl: "https://example.com/source6",
     timestamp: "8時間前",
+    imageUrl: articleImage,
     ideology: { liberal: 50, neutral: 35, conservative: 15 },
     publishedDate: "2024年10月20日",
     lastUpdated: "2024年10月22日",
@@ -602,6 +609,7 @@ const mockNews = [
     verificationLevel: "verified" as const,
     c2pa: false,
     timestamp: "12時間前",
+    imageUrl: articleImage,
     ideology: { liberal: 55, neutral: 30, conservative: 15 },
     publishedDate: "2024年10月18日",
     lastUpdated: "2024年10月19日",
@@ -703,6 +711,7 @@ const mockNews = [
     c2pa: true,
     primarySourceUrl: "https://example.com/source8",
     timestamp: "1日前",
+    imageUrl: articleImage,
     ideology: { liberal: 38, neutral: 48, conservative: 14 },
     publishedDate: "2024年10月15日",
     lastUpdated: "2024年10月16日",
@@ -796,6 +805,7 @@ const mockNews = [
     verificationLevel: "verified" as const,
     c2pa: false,
     timestamp: "2日前",
+    imageUrl: articleImage,
     ideology: { liberal: 42, neutral: 40, conservative: 18 },
     publishedDate: "2024年10月10日",
     lastUpdated: "2024年10月11日",
@@ -896,6 +906,7 @@ const mockNews = [
     verificationLevel: "unverified" as const,
     c2pa: false,
     timestamp: "3日前",
+    imageUrl: articleImage,
     ideology: { liberal: 60, neutral: 25, conservative: 15 },
     publishedDate: "2024年10月5日",
     lastUpdated: "2024年10月6日",
@@ -987,9 +998,22 @@ export const DiscoverView = () => {
   const [showAll, setShowAll] = useState(false);
   const [keywordDialogOpen, setKeywordDialogOpen] = useState(false);
   const [selectedKeyword, setSelectedKeyword] = useState<string | null>(null);
-  const { isAuthenticated } = useAuth();
+  const { isSubscribed } = useSubscription();
   const { language, t } = useLanguage();
   const { keywords, favoriteArticles } = useFavorites();
+  const scrollAreaRef = useRef<HTMLDivElement>(null);
+
+  const handleScrollDown = () => {
+    if (scrollAreaRef.current) {
+      const scrollContainer = scrollAreaRef.current.querySelector('[data-radix-scroll-area-viewport]');
+      if (scrollContainer) {
+        scrollContainer.scrollBy({
+          top: 300,
+          behavior: 'smooth'
+        });
+      }
+    }
+  };
 
   // Handle keyword timeline view
   if (selectedKeyword) {
@@ -1021,24 +1045,6 @@ export const DiscoverView = () => {
 
   return (
     <div className="container mx-auto px-4 py-6">
-      {!isAuthenticated && (
-        <Alert className="mb-6">
-          <Lock className="h-4 w-4" />
-          <AlertDescription>
-            {t("discover.limited")} <Button 
-              variant="link" 
-              className="h-auto p-0 underline"
-              onClick={() => {
-                const loginBtn = document.querySelector('[aria-label="Login"]') as HTMLElement;
-                if (loginBtn) loginBtn.click();
-              }}
-            >
-              {t("common.login")}
-            </Button> {t("discover.loginPrompt")}
-          </AlertDescription>
-        </Alert>
-      )}
-
       <Tabs defaultValue="world" className="w-full">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
           <TabsList>
@@ -1051,129 +1057,115 @@ export const DiscoverView = () => {
             <Input
               placeholder={t("discover.search")}
               className="pl-10 w-full md:w-64"
-              disabled={!isAuthenticated}
             />
           </div>
         </div>
 
-        <TabsContent value="world">
-          {isAuthenticated ? (
-            <div className="h-[600px] flex flex-col">
-              <ScrollArea className="flex-1 pr-4">
-                <div className="space-y-4">
-                  {displayedArticles.map((news) => (
-                    <NewsCard 
-                      key={news.id} 
-                      {...news} 
-                      onClick={() => setSelectedArticle(news)}
-                    />
-                  ))}
-                  {hasMoreArticles && (
-                    <div className="flex items-center justify-center py-4">
-                      <MoreHorizontal className="h-6 w-6 text-muted-foreground" />
-                    </div>
-                  )}
-                </div>
-              </ScrollArea>
-              {hasMoreArticles && (
-                <div className="pt-4 border-t flex justify-center">
-                  <Button 
-                    onClick={() => setShowAll(true)}
-                    variant="outline"
-                    className="hover:bg-sky-500 hover:text-white hover:border-sky-500 transition-colors"
-                  >
-                    {t("discover.viewMore")}
-                  </Button>
-                </div>
-              )}
-            </div>
-          ) : (
-            <div className="space-y-4">
-              {mockNews.slice(0, 1).map((news) => (
-                <NewsCard 
-                  key={news.id} 
-                  {...news} 
-                  onClick={() => isAuthenticated && setSelectedArticle(news)}
-                />
-              ))}
-              <div className="text-center py-8">
-                <Lock className="h-8 w-8 mx-auto mb-4 text-muted-foreground" />
-                <p className="text-muted-foreground mb-4">
-                  {t("discover.loginToView")}
-                </p>
+        <TabsContent value="world" className="relative">
+          <div className="h-[600px] flex flex-col relative" ref={scrollAreaRef}>
+            <ScrollArea className="flex-1 pr-4">
+              <div className="space-y-4">
+                {displayedArticles.map((news) => (
+                  <NewsCard 
+                    key={news.id} 
+                    {...news} 
+                    onClick={() => setSelectedArticle(news)}
+                  />
+                ))}
+                {hasMoreArticles && (
+                  <div className="flex items-center justify-center py-4">
+                    <MoreHorizontal className="h-6 w-6 text-muted-foreground" />
+                  </div>
+                )}
               </div>
-            </div>
-          )}
+            </ScrollArea>
+            {hasMoreArticles && (
+              <div className="pt-4 border-t flex justify-center">
+                <Button 
+                  onClick={() => setShowAll(true)}
+                  variant="outline"
+                  className="hover:bg-sky-500 hover:text-white hover:border-sky-500 transition-colors"
+                >
+                  {t("discover.viewMore")}
+                </Button>
+              </div>
+            )}
+          </div>
+          {/* Scroll down button - SP mode only */}
+          <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 md:hidden z-10">
+            <Button
+              onClick={handleScrollDown}
+              variant="ghost"
+              size="icon"
+              className="rounded-full bg-white hover:bg-gray-50 active:bg-white focus:bg-white focus-visible:outline-none h-20 w-20 border-none shadow-none transition-none"
+              style={{ backgroundColor: 'white' }}
+              aria-label="Scroll down"
+            >
+              <ChevronDown className="h-8 w-8" />
+            </Button>
+          </div>
         </TabsContent>
 
         <TabsContent value="favorites" className="space-y-4">
-          {isAuthenticated ? (
-            <>
-              {/* Keywords Section */}
-              <div className="mb-6">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-lg font-semibold">
-                    {t("discover.keywords") || (language === "en" ? "Your Keywords" : "登録キーワード")}
-                  </h3>
-                  <Button onClick={() => setKeywordDialogOpen(true)}>
-                    {t("discover.manageKeywords") || (language === "en" ? "Manage Keywords" : "キーワード管理")}
-                  </Button>
-                </div>
-                {keywords.length > 0 ? (
-                  <div className="flex flex-wrap gap-2">
-                    {keywords.map((kw) => (
-                      <Badge
-                        key={kw.id}
-                        variant="secondary"
-                        className="cursor-pointer hover:bg-primary hover:text-primary-foreground transition-colors"
-                        onClick={() => setSelectedKeyword(kw.text)}
-                      >
-                        {kw.text}
-                      </Badge>
-                    ))}
-                  </div>
-                ) : (
-                  <p className="text-sm text-muted-foreground">
-                    {language === "en" 
-                      ? "No keywords yet. Add some to track topics over time." 
-                      : "キーワードがまだ登録されていません。トピックを時系列で追跡するには追加してください。"}
-                  </p>
-                )}
-              </div>
-
-              {/* Favorite Articles Section */}
-              <div>
-                <h3 className="text-lg font-semibold mb-4">
-                  {t("discover.favoriteArticles") || (language === "en" ? "Saved Articles" : "保存した記事")}
+          <>
+            {/* Keywords Section */}
+            <div className="mb-6">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold">
+                  {t("discover.keywords") || (language === "en" ? "Your Keywords" : "登録キーワード")}
                 </h3>
-                {favoriteNews.length > 0 ? (
-                  <div className="space-y-4">
-                    {favoriteNews.map((news) => (
-                      <NewsCard
-                        key={news.id}
-                        {...news}
-                        onClick={() => setSelectedArticle(news)}
-                      />
-                    ))}
-                  </div>
-                ) : (
-                  <div className="text-center py-12">
-                    <p className="text-muted-foreground">
-                      {language === "en" 
-                        ? "No saved articles yet. Save articles by clicking the bookmark icon." 
-                        : "保存した記事がまだありません。ブックマークアイコンをクリックして記事を保存してください。"}
-                    </p>
-                  </div>
-                )}
+                <Button onClick={() => setKeywordDialogOpen(true)}>
+                  {t("discover.manageKeywords") || (language === "en" ? "Manage Keywords" : "キーワード管理")}
+                </Button>
               </div>
-            </>
-          ) : (
-            <div className="text-center py-12">
-              <p className="text-muted-foreground">
-                {t("discover.favoritesEmpty")}
-              </p>
+              {keywords.length > 0 ? (
+                <div className="flex flex-wrap gap-2">
+                  {keywords.map((kw) => (
+                    <Badge
+                      key={kw.id}
+                      variant="secondary"
+                      className="cursor-pointer hover:bg-primary hover:text-primary-foreground transition-colors"
+                      onClick={() => setSelectedKeyword(kw.text)}
+                    >
+                      {kw.text}
+                    </Badge>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-sm text-muted-foreground">
+                  {language === "en" 
+                    ? "No keywords yet. Add some to track topics over time." 
+                    : "キーワードがまだ登録されていません。トピックを時系列で追跡するには追加してください。"}
+                </p>
+              )}
             </div>
-          )}
+
+            {/* Favorite Articles Section */}
+            <div>
+              <h3 className="text-lg font-semibold mb-4">
+                {t("discover.favoriteArticles") || (language === "en" ? "Saved Articles" : "保存した記事")}
+              </h3>
+              {favoriteNews.length > 0 ? (
+                <div className="space-y-4">
+                  {favoriteNews.map((news) => (
+                    <NewsCard
+                      key={news.id}
+                      {...news}
+                      onClick={() => setSelectedArticle(news)}
+                    />
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-12">
+                  <p className="text-muted-foreground">
+                    {language === "en" 
+                      ? "No saved articles yet. Save articles by clicking the bookmark icon." 
+                      : "保存した記事がまだありません。ブックマークアイコンをクリックして記事を保存してください。"}
+                  </p>
+                </div>
+              )}
+            </div>
+          </>
         </TabsContent>
       </Tabs>
       

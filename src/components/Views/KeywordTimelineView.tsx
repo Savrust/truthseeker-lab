@@ -85,7 +85,7 @@ export const KeywordTimelineView = ({ keyword, onBack }: KeywordTimelineViewProp
                   <div className="flex items-center gap-2">
                     <Badge 
                       variant={
-                        day.trend === "up" ? "success" : 
+                        day.trend === "up" ? "default" : 
                         day.trend === "down" ? "destructive" : 
                         "secondary"
                       }

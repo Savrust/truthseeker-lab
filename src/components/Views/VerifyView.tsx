@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { VerificationDetailDialog } from "@/components/Dialogs/VerificationDetailDialog";
 import { AlertCircle, CheckCircle2, Clock, User, Lock } from "lucide-react";
-import { useAuth } from "@/contexts/AuthContext";
+import { useSubscription } from "@/contexts/SubscriptionContext";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 
@@ -57,7 +57,7 @@ const statusLabels = {
 
 export const VerifyView = () => {
   const [selectedItem, setSelectedItem] = useState<typeof verificationQueue[0] | null>(null);
-  const { isAuthenticated } = useAuth();
+  const { isSubscribed } = useSubscription();
   const { t } = useLanguage();
 
   return (
@@ -69,137 +69,106 @@ export const VerifyView = () => {
         </p>
       </div>
 
-      {!isAuthenticated && (
-        <Alert className="mb-6">
-          <Lock className="h-4 w-4" />
-          <AlertDescription>
-            {t("verify.loginRequired")}
-          </AlertDescription>
-        </Alert>
-      )}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center justify-between">
+            <span>{t("verify.cases")}</span>
+            <Button>{t("verify.addCase")}</Button>
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>{t("verify.priority")}</TableHead>
+                  <TableHead>{t("verify.claim")}</TableHead>
+                  <TableHead>{t("verify.evidence")}</TableHead>
+                  <TableHead>{t("verify.assignee")}</TableHead>
+                  <TableHead>{t("verify.status")}</TableHead>
+                  <TableHead className="text-right">{t("verify.actions")}</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {verificationQueue.map((item) => {
+                  const StatusIcon = statusIcons[item.status as keyof typeof statusIcons];
+                  return (
+                    <TableRow key={item.id}>
+                      <TableCell>
+                        <Badge variant={priorityColors[item.priority as keyof typeof priorityColors]}>
+                          {item.priority === "high" ? "高" : item.priority === "medium" ? "中" : "低"}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="font-medium">{item.claim}</TableCell>
+                      <TableCell className="text-sm text-muted-foreground">
+                        {item.evidence}
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center gap-2">
+                          <User className="h-4 w-4" />
+                          {item.assignee}
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <Badge variant="outline" className="gap-1">
+                          <StatusIcon className="h-3 w-3" />
+                          {statusLabels[item.status as keyof typeof statusLabels]}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <Button 
+                          variant="ghost" 
+                          size="sm"
+                          onClick={() => setSelectedItem(item)}
+                        >
+                          {t("verify.details")}
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
+              </TableBody>
+            </Table>
+          </div>
+        </CardContent>
+      </Card>
 
-      {!isAuthenticated ? (
+      <div className="grid md:grid-cols-2 gap-6 mt-6">
         <Card>
           <CardHeader>
-            <CardTitle>{t("verify.preview")}</CardTitle>
+            <CardTitle>{t("verify.timeline")}</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-center py-12">
-              <Lock className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
-              <p className="text-muted-foreground mb-4">
-                {t("verify.previewMessage")}
-              </p>
-              <p className="text-sm text-muted-foreground">
-                {t("verify.previewNote")}
-              </p>
-            </div>
+            <p className="text-sm text-muted-foreground mb-4">
+              {t("verify.timelineDesc")}
+            </p>
+            <Button variant="outline" className="w-full hover:bg-sky-500 hover:text-white hover:border-sky-500 transition-colors">
+              {t("verify.createTimeline")}
+            </Button>
           </CardContent>
         </Card>
-      ) : (
-        <>
 
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center justify-between">
-                <span>{t("verify.cases")}</span>
-                <Button>{t("verify.addCase")}</Button>
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="overflow-x-auto">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>{t("verify.priority")}</TableHead>
-                      <TableHead>{t("verify.claim")}</TableHead>
-                      <TableHead>{t("verify.evidence")}</TableHead>
-                      <TableHead>{t("verify.assignee")}</TableHead>
-                      <TableHead>{t("verify.status")}</TableHead>
-                      <TableHead className="text-right">{t("verify.actions")}</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {verificationQueue.map((item) => {
-                      const StatusIcon = statusIcons[item.status as keyof typeof statusIcons];
-                      return (
-                        <TableRow key={item.id}>
-                          <TableCell>
-                            <Badge variant={priorityColors[item.priority as keyof typeof priorityColors]}>
-                              {item.priority === "high" ? "高" : item.priority === "medium" ? "中" : "低"}
-                            </Badge>
-                          </TableCell>
-                          <TableCell className="font-medium">{item.claim}</TableCell>
-                          <TableCell className="text-sm text-muted-foreground">
-                            {item.evidence}
-                          </TableCell>
-                          <TableCell>
-                            <div className="flex items-center gap-2">
-                              <User className="h-4 w-4" />
-                              {item.assignee}
-                            </div>
-                          </TableCell>
-                          <TableCell>
-                            <Badge variant="outline" className="gap-1">
-                              <StatusIcon className="h-3 w-3" />
-                              {statusLabels[item.status as keyof typeof statusLabels]}
-                            </Badge>
-                          </TableCell>
-                          <TableCell className="text-right">
-                            <Button 
-                              variant="ghost" 
-                              size="sm"
-                              onClick={() => setSelectedItem(item)}
-                            >
-                              {t("verify.details")}
-                            </Button>
-                          </TableCell>
-                        </TableRow>
-                      );
-                    })}
-                  </TableBody>
-                </Table>
-              </div>
-            </CardContent>
-          </Card>
+        <Card>
+          <CardHeader>
+            <CardTitle>{t("verify.coordinated")}</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-sm text-muted-foreground mb-4">
+              {t("verify.coordinatedDesc")}
+            </p>
+            <Button variant="outline" className="w-full hover:bg-sky-500 hover:text-white hover:border-sky-500 transition-colors">
+              {t("verify.analyzePattern")}
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
 
-          <div className="grid md:grid-cols-2 gap-6 mt-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>{t("verify.timeline")}</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-muted-foreground mb-4">
-                  {t("verify.timelineDesc")}
-                </p>
-                <Button variant="outline" className="w-full hover:bg-sky-500 hover:text-white hover:border-sky-500 transition-colors">
-                  {t("verify.createTimeline")}
-                </Button>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader>
-                <CardTitle>{t("verify.coordinated")}</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-muted-foreground mb-4">
-                  {t("verify.coordinatedDesc")}
-                </p>
-                <Button variant="outline" className="w-full hover:bg-sky-500 hover:text-white hover:border-sky-500 transition-colors">
-                  {t("verify.analyzePattern")}
-                </Button>
-              </CardContent>
-            </Card>
-          </div>
-
-          {selectedItem && (
-            <VerificationDetailDialog
-              open={!!selectedItem}
-              onOpenChange={(open) => !open && setSelectedItem(null)}
-              item={selectedItem}
-            />
-          )}
-        </>
+      {selectedItem && (
+        <VerificationDetailDialog
+          open={!!selectedItem}
+          onOpenChange={(open) => !open && setSelectedItem(null)}
+          item={selectedItem}
+        />
       )}
     </div>
   );

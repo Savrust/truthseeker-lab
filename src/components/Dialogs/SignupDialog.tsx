@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/contexts/AuthContext";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { Loader2 } from "lucide-react";
+import { Loader2, Upload } from "lucide-react";
 
 interface SignupDialogProps {
   open: boolean;
@@ -18,6 +18,8 @@ export const SignupDialog = ({ open, onOpenChange, onBackToLogin, prefillEmail =
   const [email, setEmail] = useState(prefillEmail);
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [name, setName] = useState("");
+  const [photo, setPhoto] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const { register } = useAuth();
@@ -28,47 +30,49 @@ export const SignupDialog = ({ open, onOpenChange, onBackToLogin, prefillEmail =
     setError("");
 
     if (password !== confirmPassword) {
-      setError(
-        language === "en" 
-          ? "Passwords do not match." 
-          : "パスワードが一致しません。"
-      );
+      setError(t("register.passwordMismatch"));
       return;
     }
 
     if (password.length < 6) {
-      setError(
-        language === "en" 
-          ? "Password must be at least 6 characters." 
-          : "パスワードは6文字以上である必要があります。"
-      );
+      setError(t("register.passwordTooShort"));
       return;
     }
 
     setIsLoading(true);
 
     try {
-      const result = await register(email, password);
+      const defaultImage = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='128' height='128'%3E%3Crect width='128' height='128' fill='%23e5e7eb'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-size='48' fill='%239ca3af'%3E%3F%3C/text%3E%3C/svg%3E";
+      const result = await register(email, password, name || undefined, photo || defaultImage, undefined);
       if (result.success) {
         onOpenChange(false);
         setEmail("");
         setPassword("");
         setConfirmPassword("");
+        setName("");
+        setPhoto("");
       } else {
-        setError(
-          language === "en" 
-            ? result.message || "Email already exists. Please login instead." 
-            : result.message || "メールアドレスは既に存在します。代わりにログインしてください。"
-        );
+        setError(result.message || t("register.emailExists"));
       }
     } catch (err) {
-      setError(
-        language === "en" 
-          ? "An error occurred. Please try again." 
-          : "エラーが発生しました。もう一度お試しください。"
-      );
+      setError(t("register.error"));
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (file.size > 5 * 1024 * 1024) {
+        setError(t("register.photoTooLarge"));
+        return;
+      }
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPhoto(reader.result as string);
+      };
+      reader.readAsDataURL(file);
     }
   };
 
@@ -77,15 +81,62 @@ export const SignupDialog = ({ open, onOpenChange, onBackToLogin, prefillEmail =
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>
-            {language === "en" ? "Create Account" : "アカウント作成"}
+            {t("register.title")}
           </DialogTitle>
           <DialogDescription>
-            {language === "en" 
-              ? "Enter your information to create a new account."
-              : "新しいアカウントを作成するには、情報を入力してください。"}
+            {t("register.description")}
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="space-y-2">
+            <div className="flex items-end justify-between gap-4">
+              <div className="flex items-center gap-2">
+                <Label
+                  htmlFor="signup-photo"
+                  className="flex items-center gap-2 cursor-pointer border rounded-md px-4 py-2 hover:bg-accent transition-colors"
+                >
+                  <Upload className="h-4 w-4" />
+                  <span className="text-sm">
+                    {t("register.uploadPhoto")}
+                  </span>
+                </Label>
+                <Input
+                  id="signup-photo"
+                  type="file"
+                  accept="image/*"
+                  onChange={handlePhotoChange}
+                  disabled={isLoading}
+                  className="hidden"
+                />
+              </div>
+              {photo && (
+                <div className="flex-shrink-0 mr-[30px]">
+                  <img
+                    src={photo}
+                    alt="Profile"
+                    className="w-40 h-40 rounded-full object-cover border-2 border-border"
+                    onError={(e) => {
+                      const target = e.target as HTMLImageElement;
+                      target.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='128' height='128'%3E%3Crect width='128' height='128' fill='%23e5e7eb'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-size='48' fill='%239ca3af'%3E%3F%3C/text%3E%3C/svg%3E";
+                    }}
+                  />
+                </div>
+              )}
+            </div>
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="signup-name">
+              {t("register.fullName")}
+            </Label>
+            <Input
+              id="signup-name"
+              type="text"
+              placeholder={t("register.fullNamePlaceholder")}
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              disabled={isLoading}
+            />
+          </div>
           <div className="space-y-2">
             <Label htmlFor="signup-email">{t("login.email")}</Label>
             <Input
@@ -113,7 +164,7 @@ export const SignupDialog = ({ open, onOpenChange, onBackToLogin, prefillEmail =
           </div>
           <div className="space-y-2">
             <Label htmlFor="confirm-password">
-              {language === "en" ? "Confirm Password" : "パスワード確認"}
+              {t("register.confirmPassword")}
             </Label>
             <Input
               id="confirm-password"
@@ -133,36 +184,23 @@ export const SignupDialog = ({ open, onOpenChange, onBackToLogin, prefillEmail =
             {isLoading ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                {language === "en" ? "Creating..." : "作成中..."}
+                {t("register.creating")}
               </>
             ) : (
-              language === "en" ? "Create Account" : "アカウント作成"
+              t("register.createAccount")
             )}
           </Button>
           <div className="text-center text-sm">
-            {language === "en" ? (
-              <p>
-                Already have an account?{" "}
-                <button
-                  type="button"
-                  onClick={onBackToLogin}
-                  className="text-primary underline hover:text-primary/80 transition-colors"
-                >
-                  Login
-                </button>
-              </p>
-            ) : (
-              <p>
-                既にアカウントをお持ちですか？{" "}
-                <button
-                  type="button"
-                  onClick={onBackToLogin}
-                  className="text-primary underline hover:text-primary/80 transition-colors"
-                >
-                  ログイン
-                </button>
-              </p>
-            )}
+            <p>
+              {t("register.alreadyHaveAccount")}{" "}
+              <button
+                type="button"
+                onClick={onBackToLogin}
+                className="text-primary underline hover:text-primary/80 transition-colors"
+              >
+                {t("login.title")}
+              </button>
+            </p>
           </div>
         </form>
       </DialogContent>

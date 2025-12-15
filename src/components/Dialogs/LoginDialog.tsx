@@ -98,35 +98,19 @@ export const LoginDialog = ({ open, onOpenChange, onSwitchToSignup }: LoginDialo
             )}
           </Button>
           <div className="text-center text-sm">
-            {language === "en" ? (
-              <p>
-                Don't have an account?{" "}
-                <button
-                  type="button"
-                  onClick={() => {
-                    onOpenChange(false);
-                    setTimeout(() => onSwitchToSignup(""), 100);
-                  }}
-                  className="text-primary underline hover:text-primary/80 transition-colors"
-                >
-                  Sign up
-                </button>
-              </p>
-            ) : (
-              <p>
-                アカウントをお持ちでないですか？{" "}
-                <button
-                  type="button"
-                  onClick={() => {
-                    onOpenChange(false);
-                    setTimeout(() => onSwitchToSignup(""), 100);
-                  }}
-                  className="text-primary underline hover:text-primary/80 transition-colors"
-                >
-                  登録
-                </button>
-              </p>
-            )}
+            <p>
+              {t("loginPage.dontHaveAccount")}{" "}
+              <button
+                type="button"
+                onClick={() => {
+                  onOpenChange(false);
+                  setTimeout(() => onSwitchToSignup(""), 100);
+                }}
+                className="text-primary underline hover:text-primary/80 transition-colors"
+              >
+                {t("loginPage.signUp")}
+              </button>
+            </p>
           </div>
         </form>
       </DialogContent>
