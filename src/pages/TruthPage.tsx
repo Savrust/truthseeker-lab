@@ -43,118 +43,11 @@ export default function TruthPage() {
         </div>
       </div>
 
-      {/* Main Content - Three Column Layout */}
+      {/* Main Content - Single Column (sidebars removed) */}
       <div className="container mx-auto px-4 sm:px-6 py-4 sm:py-6">
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-4 sm:gap-6">
-          {/* Left Sidebar - Classification Axis */}
-          <div className="md:col-span-3 order-1">
-            <Card>
-              <CardContent className="p-4">
-                <h3 className="font-semibold mb-2">分類軸</h3>
-                <p className="text-xs text-muted-foreground mb-4">
-                  ※複数選択でハイライト
-                </p>
-                
-                <ScrollArea className="h-[calc(100vh-250px)]">
-                  <div className="space-y-6">
-                    {/* 基本 (Basic) */}
-                    <div>
-                      <Label className="text-sm font-medium mb-2 block">基本</Label>
-                      <div className="flex gap-2">
-                        <Button
-                          variant={basicView === "western" ? "default" : "outline"}
-                          size="sm"
-                          onClick={() => setBasicView("western")}
-                          className="flex-1"
-                        >
-                          欧米
-                        </Button>
-                        <Button
-                          variant={basicView === "non-western" ? "default" : "outline"}
-                          size="sm"
-                          onClick={() => setBasicView("non-western")}
-                          className="flex-1"
-                        >
-                          非欧米
-                        </Button>
-                      </div>
-                    </div>
-
-                    {/* リージョン (Region) */}
-                    <div>
-                      <Label className="text-sm font-medium mb-2 block">リージョン</Label>
-                      <div className="grid grid-cols-2 gap-2">
-                        {["アジア", "欧州", "オセアニア", "中東", "アフリカ", "北米/中南米"].map((region) => (
-                          <Button
-                            key={region}
-                            variant="outline"
-                            size="sm"
-                            className="text-xs"
-                          >
-                            {region}
-                          </Button>
-                        ))}
-                      </div>
-                    </div>
-
-                    {/* 粒度 (Granularity) */}
-                    <div>
-                      <Label className="text-sm font-medium mb-2 block">粒度</Label>
-                      <div className="flex gap-2">
-                        <Button
-                          variant={granularity === "coarse" ? "default" : "outline"}
-                          size="sm"
-                          onClick={() => setGranularity("coarse")}
-                          className="flex-1"
-                        >
-                          粗い
-                        </Button>
-                        <Button
-                          variant={granularity === "precise" ? "default" : "outline"}
-                          size="sm"
-                          onClick={() => setGranularity("precise")}
-                          className="flex-1"
-                        >
-                          精密
-                        </Button>
-                      </div>
-                    </div>
-
-                    {/* ビュー切替 (View Switch) */}
-                    <div>
-                      <Label className="text-sm font-medium mb-2 block">ビュー切替</Label>
-                      <RadioGroup value={viewType} onValueChange={setViewType}>
-                        <div className="flex items-center space-x-2">
-                          <RadioGroupItem value="majority" id="majority" />
-                          <Label htmlFor="majority" className="cursor-pointer">多数派</Label>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          <RadioGroupItem value="minority" id="minority" />
-                          <Label htmlFor="minority" className="cursor-pointer">少数派</Label>
-                        </div>
-                      </RadioGroup>
-                    </div>
-
-                    <Separator />
-
-                    <p className="text-xs text-muted-foreground">
-                      医療情報の一般的なまとめです。個別の判断は医療専門家にご相談ください。
-                    </p>
-
-                    <div className="pt-4">
-                      <Button variant="ghost" size="sm" className="w-full justify-start">
-                        ▶画像を表示
-                      </Button>
-                      <p className="text-xs text-muted-foreground mt-1">設計スケッチ</p>
-                    </div>
-                  </div>
-                </ScrollArea>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Center - Main Article */}
-          <div className="md:col-span-6 order-2">
+        <div className="max-w-4xl mx-auto">
+          {/* Main Article (center content, full width) */}
+          <div>
             <Card>
               <CardContent className="p-6">
                 <h2 className="text-2xl font-bold mb-4">
@@ -322,44 +215,6 @@ export default function TruthPage() {
             </Card>
           </div>
 
-          {/* Right Sidebar - Sources & Edit Memo */}
-          <div className="md:col-span-3 order-3">
-            <Card>
-              <CardContent className="p-4">
-                <h3 className="font-semibold mb-4">Sources (媒体)</h3>
-                
-                <div className="space-y-2 mb-6">
-                  {sources.map((source) => (
-                    <Button
-                      key={source}
-                      variant="outline"
-                      size="sm"
-                      className="w-full justify-start"
-                    >
-                      {source}
-                    </Button>
-                  ))}
-                </div>
-
-                <Separator className="my-4" />
-
-                <div>
-                  <h4 className="font-semibold mb-3">編集メモ</h4>
-                  <ul className="space-y-2 text-xs text-muted-foreground">
-                    <li className="leading-relaxed">
-                      各リストの「リンクを追加」にURLを入れてください。
-                    </li>
-                    <li className="leading-relaxed">
-                      一次資料優先(論文・公的機関・規制当局)。
-                    </li>
-                    <li className="leading-relaxed">
-                      対立する結果は並置し見出しで立場を明示。
-                    </li>
-                  </ul>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
         </div>
       </div>
     </div>

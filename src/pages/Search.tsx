@@ -133,73 +133,11 @@ export default function Search() {
         </div>
       </div>
 
-      {/* Main Content - Three Column Layout */}
+      {/* Main Content - Single Column (sidebars removed) */}
       <div className="container mx-auto px-4 sm:px-6 py-4 sm:py-6">
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-4 sm:gap-6">
-          {/* Left Sidebar - Sources */}
-          <div className="md:col-span-3 order-1">
-            <Card>
-              <CardContent className="p-4">
-                <h3 className="font-semibold mb-2">Sources (ニュース媒体)</h3>
-                <p className="text-sm text-muted-foreground mb-4">
-                  チェックした媒体のサンプル記事を中央に表示
-                </p>
-                
-                <ScrollArea className="h-[calc(100vh-300px)]">
-                  <div className="space-y-3">
-                    {newsSources.map((source) => (
-                      <div key={source.id} className="flex items-center space-x-2">
-                        <Checkbox
-                          id={source.id}
-                          checked={selectedSources.includes(source.id)}
-                          onCheckedChange={() => handleSourceToggle(source.id)}
-                        />
-                        <Label
-                          htmlFor={source.id}
-                          className="text-sm cursor-pointer flex-1"
-                        >
-                          {source.name} ({source.country})
-                        </Label>
-                      </div>
-                    ))}
-                  </div>
-
-                  <Separator className="my-4" />
-
-                  <div className="space-y-2">
-                    <p className="text-sm font-medium mb-2">Other / Opinion</p>
-                    {opinionSources.map((source) => (
-                      <div key={source.id} className="flex items-center space-x-2">
-                        <Checkbox
-                          id={source.id}
-                          checked={selectedOpinions.includes(source.id)}
-                          onCheckedChange={() => handleOpinionToggle(source.id)}
-                        />
-                        <Label
-                          htmlFor={source.id}
-                          className="text-sm cursor-pointer flex-1 flex items-center gap-2"
-                        >
-                          {source.name}
-                          <Badge variant="outline" className="text-xs">
-                            {source.badge}
-                          </Badge>
-                        </Label>
-                      </div>
-                    ))}
-                  </div>
-
-                  <div className="mt-4 p-3 bg-muted rounded-md">
-                    <p className="text-xs text-muted-foreground">
-                      注: 少数派分類の媒体・寄稿を表示する際は「Galileo's Lesson」バナーを表示すること
-                    </p>
-                  </div>
-                </ScrollArea>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Center - Results */}
-          <div className="md:col-span-6 order-2">
+        <div className="max-w-4xl mx-auto">
+          {/* Results (center content, full width) */}
+          <div>
             <Card>
               <CardContent className="p-4">
                 <h3 className="font-semibold mb-4">結果</h3>
@@ -243,51 +181,6 @@ export default function Search() {
             </Card>
           </div>
 
-          {/* Right Sidebar - Additional Commands */}
-          <div className="md:col-span-3 order-3">
-            <Card>
-              <CardContent className="p-4">
-                <h3 className="font-semibold mb-4">追加コマンド</h3>
-                
-                <div className="space-y-3 mb-6">
-                  <Button variant="outline" className="w-full justify-start">
-                    Deep Search (課金)
-                  </Button>
-                  <Button variant="outline" className="w-full justify-start">
-                    Expert View (課金)
-                  </Button>
-                  <Button variant="outline" className="w-full justify-start">
-                    傾向分析 (課金)
-                  </Button>
-                </div>
-
-                <p className="text-sm text-muted-foreground mb-6">
-                  PDF解析やメディア傾向の可視化など、高度な機能を提供します。
-                </p>
-
-                <Separator className="my-4" />
-
-                <div>
-                  <h4 className="font-medium mb-2">AFF Chairman's View</h4>
-                  <p className="text-xs text-muted-foreground mb-3">
-                    原丈人氏の寄稿や見解
-                  </p>
-                  <p className="text-xs text-muted-foreground mb-3">
-                    不定期更新
-                  </p>
-                  
-                  <div className="space-y-2">
-                    <Button variant="ghost" className="w-full justify-start text-sm">
-                      環境新聞 寄稿 (冒頭プレビュー)
-                    </Button>
-                    <Button variant="ghost" className="w-full justify-start text-sm">
-                      モック画像 (PPTX)
-                    </Button>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
         </div>
       </div>
 
