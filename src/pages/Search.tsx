@@ -127,14 +127,6 @@ export default function Search() {
     <div className="min-h-screen bg-white">
       <Header />
       
-      {/* Top Header with Title and Demo Build Info */}
-      <div className="border-b bg-white">
-        <div className="container mx-auto px-4 sm:px-6 py-3">
-          <div className="flex flex-col gap-2">
-            <h1 className="text-xl font-bold">{headingText}</h1>          </div>
-        </div>
-      </div>
-
       {/* Search Bar */}
       <div>
         <div className="container mx-auto px-4 sm:px-6 py-4">
@@ -171,7 +163,7 @@ export default function Search() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           {/* Left Column - Sources */}
           <div className="lg:col-span-3">
-            <Card className="h-[calc(100vh-300px)] flex flex-col">
+            <Card className="h-[calc(100vh-220px)] flex flex-col">
               <CardContent className="p-4 flex flex-col flex-1 min-h-0">
                 <h3 className="font-semibold mb-2">{sourcesHeading} (ニュース媒体)</h3>
                 
@@ -233,7 +225,7 @@ export default function Search() {
 
           {/* Center Column - Results */}
           <div className="lg:col-span-6">
-            <Card className="h-[calc(100vh-300px)] flex flex-col">
+            <Card className="h-[calc(100vh-220px)] flex flex-col">
               <CardContent className="p-4 flex flex-col flex-1 min-h-0">
                 <h3 className="font-semibold mb-4">結果</h3>
                 
