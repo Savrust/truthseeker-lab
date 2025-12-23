@@ -118,6 +118,7 @@ export default function Search() {
   // Get current date for demo build info
   const demoBuildDate = new Date().toISOString().split('T')[0].replace(/-/g, '-');
   const demoBuildTime = new Date().toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' });
+  const headingText = language === "ja" ? "The Truthとは何か" : "What is The Truth";
   return (
     <div className="min-h-screen bg-white">
       <Header />
@@ -126,7 +127,7 @@ export default function Search() {
       <div className="border-b bg-white">
         <div className="container mx-auto px-4 sm:px-6 py-3">
           <div className="flex flex-col gap-2">
-            <h1 className="text-xl font-bold">What is The TRUTH</h1>          </div>
+            <h1 className="text-xl font-bold">{headingText}</h1>          </div>
         </div>
       </div>
 
