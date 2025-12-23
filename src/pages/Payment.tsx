@@ -14,6 +14,7 @@ import { Header } from "@/components/Layout/Header";
 import { Footer } from "@/components/Layout/Footer";
 import { Check, Lock, CreditCard } from "lucide-react";
 import paypalLogo from "@/assets/paypal.svg";
+import googleLogo from "@/assets/googleIcon.svg";
 
 const getPlanLabels = (t: (key: string) => string): Record<string, string> => ({
   vantage: t("subscription.plan.vantage"),
@@ -168,7 +169,7 @@ export default function Payment() {
                         onClick={() => setPaymentMethod("gpay")}
                       >
                         <div className="flex items-center gap-3">
-                          <span className="text-2xl font-bold">G</span>
+                          <span className="text-2xl font-bold"><img src={googleLogo} alt="googlelogo" className="h-6" /></span>
                           <span className="text-lg font-medium">Pay</span>
                         </div>
                       </Button>

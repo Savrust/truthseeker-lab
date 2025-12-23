@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Bookmark, Share2, Settings, Globe, Search, CreditCard } from "lucide-react";
+import { Globe, CreditCard } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useSubscription } from "@/contexts/SubscriptionContext";
@@ -48,17 +48,6 @@ export const Header = () => {
           </div>
 
           <nav className="flex items-center gap-1 sm:gap-2">
-            {isSubscribed && (
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => navigate("/search")}
-                className="gap-1 sm:gap-2"
-              >
-                <Search className="h-4 w-4" />
-                <span className="hidden sm:inline">{t("header.search")}</span>
-              </Button>
-            )}
             <Button
               variant="ghost"
               size="sm"

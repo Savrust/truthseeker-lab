@@ -82,3 +82,6 @@ export const NewsStoryCard = ({ story, variant = "default" }: NewsStoryCardProps
   );
 };
 
+
+
+

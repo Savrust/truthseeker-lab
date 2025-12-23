@@ -12,15 +12,16 @@ import { Separator } from "@/components/ui/separator";
 import { Header } from "@/components/Layout/Header";
 import { useSubscription } from "@/contexts/SubscriptionContext";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { ChevronRight } from "lucide-react";
 
 const newsSources = [
-  { id: "nyt", name: "New York Times", country: "US", checked: true },
-  { id: "wsj", name: "Wall Street Journal", country: "US", checked: true },
-  { id: "wapo", name: "Washington Post", country: "US", checked: true },
-  { id: "times", name: "The Times", country: "UK", checked: true },
-  { id: "ft", name: "Financial Times", country: "UK", checked: true },
-  { id: "st", name: "The Straits Times", country: "SG", checked: true },
-  { id: "lemonde", name: "Le Monde", country: "FR", checked: true },
+  { id: "nyt", name: "New York Times", country: "US", checked: false },
+  { id: "wsj", name: "Wall Street Journal", country: "US", checked: false },
+  { id: "wapo", name: "Washington Post", country: "US", checked: false },
+  { id: "times", name: "The Times", country: "UK", checked: false },
+  { id: "ft", name: "Financial Times", country: "UK", checked: false },
+  { id: "st", name: "The Straits Times", country: "SG", checked: false },
+  { id: "lemonde", name: "Le Monde", country: "FR", checked: false },
   { id: "nzz", name: "Neue Zürcher Zeitung", country: "CH", checked: false },
   { id: "faz", name: "Frankfurter Allgemeine", country: "DE", checked: false },
   { id: "haaretz", name: "Haaretz", country: "IL", checked: false },
@@ -68,12 +69,11 @@ export default function Search() {
   const navigate = useNavigate();
   const { isSubscribed } = useSubscription();
   const { language } = useLanguage();
-  const [searchQuery, setSearchQuery] = useState("fgfdf");
-  const [selectedSources, setSelectedSources] = useState<string[]>(
-    newsSources.filter(s => s.checked).map(s => s.id)
-  );
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedSources, setSelectedSources] = useState<string[]>([]);
   const [selectedOpinions, setSelectedOpinions] = useState<string[]>([]);
   const [activeTab, setActiveTab] = useState("full");
+  const [showGalileoBanner, setShowGalileoBanner] = useState(false);
 
   // Redirect to subscription if not subscribed
   if (!isSubscribed) {
@@ -88,9 +88,19 @@ export default function Search() {
   };
 
   const handleOpinionToggle = (id: string) => {
-    setSelectedOpinions(prev =>
-      prev.includes(id) ? prev.filter(s => s !== id) : [...prev, id]
-    );
+    setSelectedOpinions(prev => {
+      const newSelection = prev.includes(id) 
+        ? prev.filter(s => s !== id) 
+        : [...prev, id];
+      
+      // Check if any opinion/minor source is selected
+      const hasMinor = newSelection.some(selId => 
+        opinionSources.find(s => s.id === selId && s.badge === "MINOR")
+      );
+      setShowGalileoBanner(hasMinor);
+      
+      return newSelection;
+    });
   };
 
   const handleExecute = () => {
@@ -105,52 +115,142 @@ export default function Search() {
     }
   };
 
+  // Get current date for demo build info
+  const demoBuildDate = new Date().toISOString().split('T')[0].replace(/-/g, '-');
+  const demoBuildTime = new Date().toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' });
+
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-white">
       <Header />
       
-      {/* Top Bar */}
-      <div className="border-b bg-card">
-        <div className="container mx-auto px-4 sm:px-6 py-2 sm:py-3">
-          <div className="flex items-center gap-2 sm:gap-4">
-            {/* <div className="text-sm text-muted-foreground">
-              What is The TRUTH Demo build | 2025-11-12 07:24
-            </div> */}
-            <form onSubmit={(e) => { e.preventDefault(); handleExecute(); }} className="flex-1 flex gap-2 max-w-2xl">
-              <Input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                onKeyPress={handleKeyPress}
-                className="flex-1 text-sm sm:text-base"
-                placeholder="検索クエリを入力..."
-              />
-              <Button type="submit" size="sm" className="text-xs sm:text-sm whitespace-nowrap">
-                デモを実行
-              </Button>
-            </form>
-          </div>
+      {/* Top Header with Title and Demo Build Info */}
+      <div className="border-b bg-white">
+        <div className="container mx-auto px-4 sm:px-6 py-3">
+          <div className="flex flex-col gap-2">
+            <h1 className="text-xl font-bold">What is The TRUTH</h1>          </div>
         </div>
       </div>
 
-      {/* Main Content - Single Column (sidebars removed) */}
-      <div className="container mx-auto px-4 sm:px-6 py-4 sm:py-6">
-        <div className="max-w-4xl mx-auto">
-          {/* Results (center content, full width) */}
-          <div>
-            <Card>
-              <CardContent className="p-4">
+      {/* Search Bar */}
+      <div>
+        <div className="container mx-auto px-4 sm:px-6 py-4">
+          <form 
+            onSubmit={(e) => { e.preventDefault(); handleExecute(); }} 
+            className="flex gap-3 max-w-4xl"
+          >
+            <Input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              onKeyPress={handleKeyPress}
+              className="flex-1 text-base"
+              placeholder="調べたいニュース/疑問を入力 (例: 『ウクライナの発表は正しい?』)"
+            />
+            <Button type="submit" className="bg-blue-600 hover:bg-blue-700 text-white px-6">
+              デモを実行
+            </Button>
+          </form>
+        </div>
+      </div>
+
+      {/* Galileo Banner (shown when minor sources are selected) */}
+      {showGalileoBanner && (
+        <div className="bg-yellow-100 border-b border-yellow-300">
+          <div className="container mx-auto px-4 sm:px-6 py-2">
+            <p className="text-sm font-semibold text-yellow-800">ガリレオの教訓</p>
+          </div>
+        </div>
+      )}
+
+      {/* Main Content - Three Column Layout */}
+      <div className="container mx-auto px-4 sm:px-6 py-5.5">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          {/* Left Column - Sources */}
+          <div className="lg:col-span-3">
+            <Card className="h-[calc(100vh-300px)] flex flex-col">
+              <CardContent className="p-4 flex flex-col flex-1 min-h-0">
+                <h3 className="font-semibold mb-2">Sources (ニュース媒体)</h3>
+                <p className="text-xs text-gray-600 mb-4">
+                  チェックした媒体のサンプル記事を中央に表示
+                </p>
+                
+                <ScrollArea className="flex-1 min-h-0">
+                  <div className="space-y-2">
+                    {newsSources.map((source) => (
+                      <div key={source.id} className="flex items-center space-x-2">
+                        <Checkbox
+                          id={source.id}
+                          checked={selectedSources.includes(source.id)}
+                          onCheckedChange={() => handleSourceToggle(source.id)}
+                        />
+                        <Label
+                          htmlFor={source.id}
+                          className="text-sm font-normal cursor-pointer flex-1"
+                        >
+                          {source.name} ({source.country})
+                        </Label>
+                      </div>
+                    ))}
+                  </div>
+                </ScrollArea>
+
+                <Separator className="my-4" />
+
+                <div>
+                  <h4 className="font-semibold text-sm mb-2">Other / Opinion</h4>
+                  <div className="space-y-2">
+                    {opinionSources.map((source) => (
+                      <div key={source.id} className="flex items-center space-x-2">
+                        <Checkbox
+                          id={source.id}
+                          checked={selectedOpinions.includes(source.id)}
+                          onCheckedChange={() => handleOpinionToggle(source.id)}
+                        />
+                        <Label
+                          htmlFor={source.id}
+                          className="text-sm font-normal cursor-pointer flex-1 flex items-center gap-2"
+                        >
+                          {source.name}
+                          <Badge 
+                            variant={source.badge === "OPINION" ? "default" : "secondary"}
+                            className="text-xs"
+                          >
+                            {source.badge}
+                          </Badge>
+                        </Label>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* <div className="mt-4 p-2 bg-gray-50 rounded text-xs text-gray-600">
+                  ※少数派に分類した媒体/寄稿を表示する際は、画面上部に必ず「ガリレオの教訓」バナーが表示されます。
+                </div> */}
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Center Column - Results */}
+          <div className="lg:col-span-6">
+            <Card className="h-[calc(100vh-300px)] flex flex-col">
+              <CardContent className="p-4 flex flex-col flex-1 min-h-0">
                 <h3 className="font-semibold mb-4">結果</h3>
                 
                 <Tabs value={activeTab} onValueChange={setActiveTab} className="mb-4">
-                  <TabsList>
-                    <TabsTrigger value="full">全文</TabsTrigger>
-                    <TabsTrigger value="summary">サマリー</TabsTrigger>
-                    <TabsTrigger value="summary20">20行要約</TabsTrigger>
+                  <TabsList className="grid w-full grid-cols-3">
+                    <TabsTrigger value="full" className={activeTab === "full" ? "bg-blue-600 text-white" : ""}>
+                      全文
+                    </TabsTrigger>
+                    <TabsTrigger value="summary" className={activeTab === "summary" ? "bg-blue-600 text-white" : ""}>
+                      サマリー
+                    </TabsTrigger>
+                    <TabsTrigger value="summary20" className={activeTab === "summary20" ? "bg-blue-600 text-white" : ""}>
+                      20行要約
+                    </TabsTrigger>
                   </TabsList>
                 </Tabs>
 
-                <ScrollArea className="h-[calc(100vh-300px)]">
+                <ScrollArea className="flex-1 min-h-0">
                   <div className="space-y-4">
                     {mockArticles
                       .filter(article => 
@@ -164,31 +264,91 @@ export default function Search() {
                             <span className="font-medium">{article.source}</span>
                             <Badge variant="default">Major</Badge>
                           </div>
-                          <p className="text-sm text-muted-foreground leading-relaxed">
+                          <p className="text-sm text-gray-700 leading-relaxed">
                             {article.text}
                           </p>
                         </div>
                       ))}
+                    {selectedSources.length === 0 && selectedOpinions.length === 0 && (
+                      <div className="text-center text-gray-500 py-8">
+                        チェックした媒体のサンプル記事がここに表示されます
+                      </div>
+                    )}
                   </div>
                 </ScrollArea>
-
-                <div className="mt-4 p-3 bg-muted rounded-md">
-                  <p className="text-xs text-muted-foreground">
-                    このデモはUI挙動の確認用です。記事本文・要約はダミーであり、出典媒体の見解・主張を代表するものではありません。
-                  </p>
-                </div>
               </CardContent>
             </Card>
           </div>
 
+          {/* Right Column - Additional Commands */}
+          <div className="lg:col-span-3">
+            <Card>
+              <CardContent className="p-4">
+                <h3 className="font-semibold mb-4">追加コマンド</h3>
+                
+                <div className="space-y-3 mb-6">
+                  <button
+                    className="w-full h-10 items-center justify-center rounded-md bg-muted text-muted-foreground border border-border px-3 py-1.5 text-sm font-medium transition-all hover:bg-background hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                    onClick={() => {
+                      // TODO: Implement Deep Search functionality
+                      console.log("Deep Search clicked");
+                    }}
+                  >
+                    Deep Search (課金)
+                  </button>
+                  <button
+                    className="w-full h-10 items-center justify-center rounded-md bg-muted text-muted-foreground border border-border px-3 py-1.5 text-sm font-medium transition-all hover:bg-background hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                    onClick={() => {
+                      // TODO: Implement Expert View functionality
+                      console.log("Expert View clicked");
+                    }}
+                  >
+                    Expert View (課金)
+                  </button>
+                  <button
+                    className="w-full h-10 items-center justify-center rounded-md bg-muted text-muted-foreground border border-border px-3 py-1.5 text-sm font-medium transition-all hover:bg-background hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                    onClick={() => {
+                      // TODO: Implement 傾向分析 functionality
+                      console.log("傾向分析 clicked");
+                    }}
+                  >
+                    傾向分析 (課金)
+                  </button>
+                </div>
+
+                <div className="mb-6 p-3 bg-gray-50 rounded text-xs text-gray-600">
+                  「Deep Search / Expert View / 傾向分析」は、一次資料PDFやメタ分析、メディア傾向の可視化など高度機能の想定です。
+                </div>
+
+                <Separator className="my-4" />
+
+                <div>
+                  <h4 className="font-semibold mb-2">AFF Chairman's View</h4>
+                  <p className="text-xs text-gray-600 mb-3">
+                    (不定期更新)原丈人氏の寄稿や見解
+                  </p>
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2 text-sm text-blue-600 cursor-pointer hover:underline">
+                      <ChevronRight className="h-4 w-4" />
+                      環境新聞 寄稿 (冒頭プレビュー)
+                    </div>
+                    <div className="flex items-center gap-2 text-sm text-blue-600 cursor-pointer hover:underline">
+                      <ChevronRight className="h-4 w-4" />
+                      モック画像 (PPTX)
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         </div>
       </div>
 
       {/* Footer */}
-      <footer className="border-t bg-background mt-8">
+      <footer className="border-t bg-white mt-8">
         <div className="container mx-auto px-4 py-4">
-          <p className="text-xs text-center text-muted-foreground">
-            © The Truth -デモサイト。医療・政策判断は必ず専門家・公的情報を参照ください。
+          <p className="text-xs text-center text-gray-600">
+            © The Truth - デモサイト。医療・政策判断は必ず専門家・公的情報を参照ください。
           </p>
         </div>
       </footer>

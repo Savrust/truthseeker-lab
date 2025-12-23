@@ -1,5 +1,8 @@
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { Button } from "@/components/ui/button";
+import { Search as SearchIcon } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 interface TabNavigationProps {
   value: string;
@@ -8,6 +11,7 @@ interface TabNavigationProps {
 
 export const TabNavigation = ({ value, onValueChange }: TabNavigationProps) => {
   const { t } = useLanguage();
+  const navigate = useNavigate();
 
   return (
     <div className="border-b bg-background">
@@ -26,6 +30,17 @@ export const TabNavigation = ({ value, onValueChange }: TabNavigationProps) => {
             >
               {t("tabs.verify")}
             </TabsTrigger>
+
+            {/* Search button grouped with tabs on the left */}
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => navigate("/search")}
+              className="gap-1 sm:gap-2"
+            >
+              {/* <SearchIcon className="h-4 w-4" /> */}
+              <span className="hidden sm:inline">{t("header.search")}</span>
+            </Button>
           </TabsList>
         </Tabs>
       </div>
