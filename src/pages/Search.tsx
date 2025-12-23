@@ -317,9 +317,9 @@ export default function Search() {
                   </button>
                 </div>
 
-                <div className="mb-6 p-3 bg-gray-50 rounded text-xs text-gray-600">
+                {/* <div className="mb-6 p-3 bg-gray-50 rounded text-xs text-gray-600">
                   「Deep Search / Expert View / 傾向分析」は、一次資料PDFやメタ分析、メディア傾向の可視化など高度機能の想定です。
-                </div>
+                </div> */}
 
                 <Separator className="my-4" />
 
