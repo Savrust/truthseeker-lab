@@ -119,6 +119,10 @@ export default function Search() {
   const demoBuildDate = new Date().toISOString().split('T')[0].replace(/-/g, '-');
   const demoBuildTime = new Date().toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' });
   const headingText = language === "ja" ? "The Truthとは何か" : "What is The Truth";
+  const sourcesHeading = language === "ja" ? "ニュース媒体" : "Sources";
+  const opinionHeading = language === "ja" ? "その他 / 寄稿" : "Other / Opinion";
+  const opinionBadgeLabel = language === "ja" ? "オピニオン" : "OPINION";
+  const minorBadgeLabel = language === "ja" ? "少数派" : "MINOR";
   return (
     <div className="min-h-screen bg-white">
       <Header />
@@ -169,10 +173,7 @@ export default function Search() {
           <div className="lg:col-span-3">
             <Card className="h-[calc(100vh-300px)] flex flex-col">
               <CardContent className="p-4 flex flex-col flex-1 min-h-0">
-                <h3 className="font-semibold mb-2">Sources (ニュース媒体)</h3>
-                <p className="text-xs text-gray-600 mb-4">
-                  チェックした媒体のサンプル記事を中央に表示
-                </p>
+                <h3 className="font-semibold mb-2">{sourcesHeading} (ニュース媒体)</h3>
                 
                 <ScrollArea className="flex-1 min-h-0">
                   <div className="space-y-2">
@@ -197,7 +198,7 @@ export default function Search() {
                 <Separator className="my-4" />
 
                 <div>
-                  <h4 className="font-semibold text-sm mb-2">Other / Opinion</h4>
+                  <h4 className="font-semibold text-sm mb-2">{opinionHeading}</h4>
                   <div className="space-y-2">
                     {opinionSources.map((source) => (
                       <div key={source.id} className="flex items-center space-x-2">
@@ -215,7 +216,7 @@ export default function Search() {
                             variant={source.badge === "OPINION" ? "default" : "secondary"}
                             className="text-xs"
                           >
-                            {source.badge}
+                            {source.badge === "OPINION" ? opinionBadgeLabel : minorBadgeLabel}
                           </Badge>
                         </Label>
                       </div>
