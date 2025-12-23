@@ -148,7 +148,7 @@ export default function Search() {
               onChange={(e) => setSearchQuery(e.target.value)}
               onKeyPress={handleKeyPress}
               className="flex-1 text-base"
-              placeholder="調べたいニュース/疑問を入力 (例: 『ウクライナの発表は正しい?』)"
+              placeholder="調べたいニュース/疑問を入力"
             />
             <Button type="submit" className="bg-blue-600 hover:bg-blue-700 text-white px-6">
               デモを実行
