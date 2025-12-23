@@ -118,7 +118,6 @@ export default function Search() {
   // Get current date for demo build info
   const demoBuildDate = new Date().toISOString().split('T')[0].replace(/-/g, '-');
   const demoBuildTime = new Date().toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' });
-
   return (
     <div className="min-h-screen bg-white">
       <Header />
