@@ -30,8 +30,8 @@ const newsSources = [
 ];
 
 const opinionSources = [
-  { id: "env", name: "環境新聞 (寄稿)", badge: "OPINION", checked: false },
-  { id: "analyst", name: "独立系アナリスト (例)", badge: "MINOR", checked: false },
+  { id: "env", name: { ja: "環境新聞 (寄稿)", en: "Environmental News (Contribution)" }, badge: "OPINION", checked: false },
+  { id: "analyst", name: { ja: "独立系アナリスト (例)", en: "Independent Analyst (Example)" }, badge: "MINOR", checked: false },
 ];
 
 const mockArticles = [
@@ -123,6 +123,23 @@ export default function Search() {
   const opinionHeading = language === "ja" ? "その他 / 寄稿" : "Other / Opinion";
   const opinionBadgeLabel = language === "ja" ? "オピニオン" : "OPINION";
   const minorBadgeLabel = language === "ja" ? "少数派" : "MINOR";
+  const searchPlaceholder = language === "ja" ? "調べたいニュース/疑問を入力" : "Enter news/query to search";
+  const executeDemoText = language === "ja" ? "デモを実行" : "Run Demo";
+  const galileoLessonText = language === "ja" ? "ガリレオの教訓" : "Galileo's Lesson";
+  const sourcesSubheading = language === "ja" ? "(ニュース媒体)" : "(News Sources)";
+  const resultsText = language === "ja" ? "結果" : "Results";
+  const fullTextTab = language === "ja" ? "全文" : "Full Text";
+  const summaryTab = language === "ja" ? "サマリー" : "Summary";
+  const summary20Tab = language === "ja" ? "20行要約" : "20-line Summary";
+  const sampleArticlesText = language === "ja" ? "チェックした媒体のサンプル記事がここに表示されます" : "Sample articles from checked media will be displayed here";
+  const additionalCommandsText = language === "ja" ? "追加コマンド" : "Additional Commands";
+  const deepSearchText = language === "ja" ? "Deep Search (課金)" : "Deep Search (Paid)";
+  const expertViewText = language === "ja" ? "Expert View (課金)" : "Expert View (Paid)";
+  const trendAnalysisText = language === "ja" ? "傾向分析 (課金)" : "Trend Analysis (Paid)";
+  const affChairmanDesc = language === "ja" ? "(不定期更新)原丈人氏の寄稿や見解" : "(Irregularly Updated) Contributions and Views by Mr. Takehito Hara";
+  const envNewsContribution = language === "ja" ? "環境新聞 寄稿 (冒頭プレビュー)" : "Environmental News Contribution (Preview)";
+  const mockImageText = language === "ja" ? "モック画像 (PPTX)" : "Mock Image (PPTX)";
+  const footerText = language === "ja" ? "© The Truth - デモサイト。医療・政策判断は必ず専門家・公的情報を参照ください。" : "© The Truth - Demo site. Please refer to experts and public information for medical and policy decisions.";
   return (
     <div className="min-h-screen bg-white">
       <Header />
@@ -140,10 +157,10 @@ export default function Search() {
               onChange={(e) => setSearchQuery(e.target.value)}
               onKeyPress={handleKeyPress}
               className="flex-1 text-base"
-              placeholder="調べたいニュース/疑問を入力"
+              placeholder={searchPlaceholder}
             />
             <Button type="submit" className="bg-blue-600 hover:bg-blue-700 text-white px-6">
-              デモを実行
+              {executeDemoText}
             </Button>
           </form>
         </div>
@@ -153,7 +170,7 @@ export default function Search() {
       {showGalileoBanner && (
         <div className="bg-yellow-100 border-b border-yellow-300">
           <div className="container mx-auto px-4 sm:px-6 py-2">
-            <p className="text-sm font-semibold text-yellow-800">ガリレオの教訓</p>
+            <p className="text-sm font-semibold text-yellow-800">{galileoLessonText}</p>
           </div>
         </div>
       )}
@@ -165,7 +182,7 @@ export default function Search() {
           <div className="lg:col-span-3">
             <Card className="h-[calc(100vh-220px)] flex flex-col">
               <CardContent className="p-4 flex flex-col flex-1 min-h-0">
-                <h3 className="font-semibold mb-2">{sourcesHeading} (ニュース媒体)</h3>
+                <h3 className="font-semibold mb-2">{sourcesHeading} {sourcesSubheading}</h3>
                 
                 <ScrollArea className="flex-1 min-h-0">
                   <div className="space-y-2 mt-2">
@@ -203,7 +220,7 @@ export default function Search() {
                           htmlFor={source.id}
                           className="text-sm font-normal cursor-pointer flex-1 flex items-center gap-2"
                         >
-                          {source.name}
+                          {typeof source.name === 'object' ? source.name[language] : source.name}
                           <Badge 
                             variant={source.badge === "OPINION" ? "default" : "secondary"}
                             className="text-xs"
@@ -227,18 +244,18 @@ export default function Search() {
           <div className="lg:col-span-6">
             <Card className="h-[calc(100vh-220px)] flex flex-col">
               <CardContent className="p-4 flex flex-col flex-1 min-h-0">
-                <h3 className="font-semibold mb-4">結果</h3>
+                <h3 className="font-semibold mb-4">{resultsText}</h3>
                 
                 <Tabs value={activeTab} onValueChange={setActiveTab} className="mb-4">
                   <TabsList className="grid w-full grid-cols-3">
                     <TabsTrigger value="full" className={activeTab === "full" ? "bg-blue-600 text-white" : ""}>
-                      全文
+                      {fullTextTab}
                     </TabsTrigger>
                     <TabsTrigger value="summary" className={activeTab === "summary" ? "bg-blue-600 text-white" : ""}>
-                      サマリー
+                      {summaryTab}
                     </TabsTrigger>
                     <TabsTrigger value="summary20" className={activeTab === "summary20" ? "bg-blue-600 text-white" : ""}>
-                      20行要約
+                      {summary20Tab}
                     </TabsTrigger>
                   </TabsList>
                 </Tabs>
@@ -264,7 +281,7 @@ export default function Search() {
                       ))}
                     {selectedSources.length === 0 && selectedOpinions.length === 0 && (
                       <div className="text-center text-gray-500 py-8">
-                        チェックした媒体のサンプル記事がここに表示されます
+                        {/* {sampleArticlesText} */}
                       </div>
                     )}
                   </div>
@@ -277,7 +294,7 @@ export default function Search() {
           <div className="lg:col-span-3">
             <Card>
               <CardContent className="p-4">
-                <h3 className="font-semibold mb-4">追加コマンド</h3>
+                <h3 className="font-semibold mb-4">{additionalCommandsText}</h3>
                 
                 <div className="space-y-3 mb-6">
                   <button
@@ -287,7 +304,7 @@ export default function Search() {
                       console.log("Deep Search clicked");
                     }}
                   >
-                    Deep Search (課金)
+                    {deepSearchText}
                   </button>
                   <button
                     className="w-full h-10 items-center justify-center rounded-md bg-muted text-muted-foreground border border-border px-3 py-1.5 text-sm font-medium transition-all hover:bg-background hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
@@ -296,16 +313,16 @@ export default function Search() {
                       console.log("Expert View clicked");
                     }}
                   >
-                    Expert View (課金)
+                    {expertViewText}
                   </button>
                   <button
                     className="w-full h-10 items-center justify-center rounded-md bg-muted text-muted-foreground border border-border px-3 py-1.5 text-sm font-medium transition-all hover:bg-background hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                     onClick={() => {
-                      // TODO: Implement 傾向分析 functionality
-                      console.log("傾向分析 clicked");
+                      // TODO: Implement Trend Analysis functionality
+                      console.log("Trend Analysis clicked");
                     }}
                   >
-                    傾向分析 (課金)
+                    {trendAnalysisText}
                   </button>
                 </div>
 
@@ -318,16 +335,16 @@ export default function Search() {
                 <div>
                   <h4 className="font-semibold mb-2">AFF Chairman's View</h4>
                   <p className="text-xs text-gray-600 mb-3">
-                    (不定期更新)原丈人氏の寄稿や見解
+                    {affChairmanDesc}
                   </p>
                   <div className="space-y-2">
                     <div className="flex items-center gap-2 text-sm text-blue-600 cursor-pointer hover:underline">
                       <ChevronRight className="h-4 w-4" />
-                      環境新聞 寄稿 (冒頭プレビュー)
+                      {envNewsContribution}
                     </div>
                     <div className="flex items-center gap-2 text-sm text-blue-600 cursor-pointer hover:underline">
                       <ChevronRight className="h-4 w-4" />
-                      モック画像 (PPTX)
+                      {mockImageText}
                     </div>
                   </div>
                 </div>
@@ -341,7 +358,7 @@ export default function Search() {
       <footer className="border-t bg-white mt-8">
         <div className="container mx-auto px-4 py-4">
           <p className="text-xs text-center text-gray-600">
-            © The Truth - デモサイト。医療・政策判断は必ず専門家・公的情報を参照ください。
+            {footerText}
           </p>
         </div>
       </footer>
