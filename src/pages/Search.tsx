@@ -168,7 +168,7 @@ export default function Search() {
                 <h3 className="font-semibold mb-2">{sourcesHeading} (ニュース媒体)</h3>
                 
                 <ScrollArea className="flex-1 min-h-0">
-                  <div className="space-y-2">
+                  <div className="space-y-2 mt-2">
                     {newsSources.map((source) => (
                       <div key={source.id} className="flex items-center space-x-2">
                         <Checkbox
