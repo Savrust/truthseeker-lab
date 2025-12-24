@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Quote } from "lucide-react";
@@ -90,6 +90,7 @@ const testimonials = [
 export const Testimonials = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
   const { t } = useLanguage();
+  const [pausedIndex, setPausedIndex] = useState<number | null>(null);
 
   useEffect(() => {
     const section = sectionRef.current;
@@ -145,47 +146,62 @@ export const Testimonials = () => {
             </p>
           </div>
 
-          <div className="overflow-x-hidden pb-4 relative">
+          <div className="overflow-x-hidden pb-4 relative pt-4">
             <div 
               className="flex gap-6 min-w-max animate-scroll-left"
               style={{
-                width: `${(testimonials.length * 368) + (testimonials.length * 24)}px`
+                width: `${(testimonials.length * 368) + (testimonials.length * 24)}px`,
+                animationPlayState: pausedIndex !== null ? 'paused' : 'running'
               }}
             >
-              {scrollingTestimonials.map((testimonial, index) => (
-                <Card
-                  key={`testimonial-${index}`}
-                  className="w-[350px] flex-shrink-0 hover:shadow-lg hover:scale-105 transition-all duration-300"
-                >
-                  <CardContent className="p-6">
-                    <div className="flex flex-col gap-4">
-                      <div className="flex items-center gap-4">
-                        <Avatar className="h-16 w-16 flex-shrink-0">
-                          <AvatarImage src={testimonial.image} alt={testimonial.name} />
-                          <AvatarFallback>
-                            {testimonial.name.split(' ').map(n => n[0]).join('')}
-                          </AvatarFallback>
-                        </Avatar>
-                        <div>
-                          <p className="font-semibold text-foreground">
-                            {testimonial.name}
-                          </p>
-                          <p className="text-sm text-muted-foreground">
-                            {testimonial.role}
+              {scrollingTestimonials.map((testimonial, index) => {
+                const isPaused = pausedIndex === index;
+                return (
+                  <Card
+                    key={`testimonial-${index}`}
+                    className={`w-[350px] flex-shrink-0 transition-all duration-300 ${
+                      isPaused 
+                        ? 'shadow-lg z-10' 
+                        : 'hover:shadow-lg hover:scale-105'
+                    }`}
+                    onMouseEnter={() => setPausedIndex(index)}
+                    onMouseLeave={() => setPausedIndex(null)}
+                    onClick={() => setPausedIndex(isPaused ? null : index)}
+                    style={{
+                      transform: isPaused ? 'scale(1.1)' : undefined,
+                      position: isPaused ? 'relative' : undefined
+                    }}
+                  >
+                    <CardContent className="p-6">
+                      <div className="flex flex-col gap-4">
+                        <div className="flex items-center gap-4">
+                          <Avatar className="h-16 w-16 flex-shrink-0">
+                            <AvatarImage src={testimonial.image} alt={testimonial.name} />
+                            <AvatarFallback>
+                              {testimonial.name.split(' ').map(n => n[0]).join('')}
+                            </AvatarFallback>
+                          </Avatar>
+                          <div>
+                            <p className="font-semibold text-foreground">
+                              {testimonial.name}
+                            </p>
+                            <p className="text-sm text-muted-foreground">
+                              {testimonial.role}
+                            </p>
+                          </div>
+                        </div>
+                        
+                        <div className="flex-1">
+                          <Quote className="h-6 w-6 text-primary mb-2 opacity-50" />
+                          <p className="text-sm leading-relaxed">
+                            {testimonial.testimonial}
                           </p>
                         </div>
                       </div>
-                      
-                      <div className="flex-1">
-                        <Quote className="h-6 w-6 text-primary mb-2 opacity-50" />
-                        <p className="text-sm leading-relaxed">
-                          {testimonial.testimonial}
-                        </p>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
+                    </CardContent>
+                  </Card>
+                );
+              })}
             </div>
           </div>
         </div>
