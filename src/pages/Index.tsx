@@ -8,6 +8,7 @@ import { VerifyView } from "@/components/Views/VerifyView";
 import { Testimonials } from "@/components/Layout/Testimonials";
 import { Footer } from "@/components/Layout/Footer";
 import { useSubscription } from "@/contexts/SubscriptionContext";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { NewsCard } from "@/components/Cards/NewsCard";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
@@ -17,6 +18,7 @@ const Index = () => {
   const [activeTab, setActiveTab] = useState("discover");
   const [discoverActiveTab, setDiscoverActiveTab] = useState("world");
   const { isSubscribed } = useSubscription();
+  const { language } = useLanguage();
   const navigate = useNavigate();
   const location = useLocation();
   const scrollAreaRef = useRef<HTMLDivElement>(null);
@@ -26,6 +28,8 @@ const Index = () => {
     activeTab === "verify" || 
     location.pathname === "/search" ||
     (activeTab === "discover" && discoverActiveTab === "favorites");
+  
+  const featuredArticlesText = language === "ja" ? "注目記事" : "Featured Articles";
 
   const handleArticleClick = () => {
     if (!isSubscribed) {
@@ -65,8 +69,8 @@ const Index = () => {
         <>
           {/* Article list - visible when S=0, clicking navigates to subscription */}
           <section className="bg-muted/10 border-b relative">
-            <div className="container mx-auto px-4 max-w-[1200px] py-10 relative">
-              <h2 className="text-2xl font-bold mb-6">Featured Articles</h2>
+            <div className="container mx-auto px-4 py-10 relative">
+              <h2 className="text-2xl font-bold mb-6">{featuredArticlesText}</h2>
               <div className="h-[600px] flex flex-col relative" ref={scrollAreaRef}>
                 <ScrollArea className="flex-1 pr-4">
                   <div className="space-y-4">
