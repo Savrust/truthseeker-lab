@@ -15,6 +15,7 @@ import { Footer } from "@/components/Layout/Footer";
 import { Check, Lock, CreditCard } from "lucide-react";
 import paypalLogo from "@/assets/paypal.svg";
 import googleLogo from "@/assets/googleIcon.svg";
+import cardIconsImage from "@/assets/Screenshot_1.png";
 
 const getPlanLabels = (t: (key: string) => string): Record<string, string> => ({
   vantage: t("subscription.plan.vantage"),
@@ -212,21 +213,20 @@ export default function Payment() {
                     <div className="space-y-4">
                       <div className="space-y-2">
                         <Label htmlFor="card-number">{t("payment.cardNumber")}</Label>
-                        <div className="flex items-center gap-2">
+                        <div className="flex items-center gap-2 border border-border rounded-md p-2">
                           <Input
                             id="card-number"
                             placeholder={t("payment.cardNumberPlaceholder")}
                             value={cardNumber}
                             onChange={(e) => setCardNumber(e.target.value)}
                             required
-                            className="flex-1"
+                            className="flex-1 border-0 focus-visible:ring-0 focus-visible:ring-offset-0"
                           />
-                          <div className="flex items-center gap-1">
-                            <span className="text-xs font-semibold text-gray-600">VISA</span>
-                            <span className="text-xs font-semibold text-gray-600">JCB</span>
-                            <span className="text-xs font-semibold text-gray-600">MC</span>
-                            <span className="text-xs font-semibold text-gray-600">D</span>
-                          </div>
+                          <img 
+                            src={cardIconsImage} 
+                            alt="VISA JCB MC D" 
+                            className="h-6 object-contain"
+                          />
                         </div>
                       </div>
 
