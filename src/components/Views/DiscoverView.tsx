@@ -993,15 +993,27 @@ export const mockNews = [
   },
 ];
 
-export const DiscoverView = () => {
+interface DiscoverViewProps {
+  onTabChange?: (tab: string) => void;
+}
+
+export const DiscoverView = ({ onTabChange }: DiscoverViewProps = {}) => {
   const [selectedArticle, setSelectedArticle] = useState<typeof mockNews[0] | null>(null);
   const [showAll, setShowAll] = useState(false);
   const [keywordDialogOpen, setKeywordDialogOpen] = useState(false);
   const [selectedKeyword, setSelectedKeyword] = useState<string | null>(null);
+  const [activeDiscoverTab, setActiveDiscoverTab] = useState("world");
   const { isSubscribed } = useSubscription();
   const { language, t } = useLanguage();
   const { keywords, favoriteArticles } = useFavorites();
   const scrollAreaRef = useRef<HTMLDivElement>(null);
+
+  const handleTabChange = (value: string) => {
+    setActiveDiscoverTab(value);
+    if (onTabChange) {
+      onTabChange(value);
+    }
+  };
 
   const handleScrollDown = () => {
     if (scrollAreaRef.current) {
@@ -1045,7 +1057,7 @@ export const DiscoverView = () => {
 
   return (
     <div className="container mx-auto px-4 py-6">
-      <Tabs defaultValue="world" className="w-full">
+      <Tabs value={activeDiscoverTab} onValueChange={handleTabChange} className="w-full">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
           <TabsList>
             <TabsTrigger value="world">{t("tabs.world")}</TabsTrigger>
@@ -1107,65 +1119,71 @@ export const DiscoverView = () => {
         </TabsContent>
 
         <TabsContent value="favorites" className="space-y-4">
-          <>
-            {/* Keywords Section */}
-            <div className="mb-6">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-semibold">
-                  {t("discover.keywords") || (language === "en" ? "Your Keywords" : "登録キーワード")}
-                </h3>
-                <Button onClick={() => setKeywordDialogOpen(true)}>
-                  {t("discover.manageKeywords") || (language === "en" ? "Manage Keywords" : "キーワード管理")}
-                </Button>
-              </div>
-              {keywords.length > 0 ? (
-                <div className="flex flex-wrap gap-2">
-                  {keywords.map((kw) => (
-                    <Badge
-                      key={kw.id}
-                      variant="secondary"
-                      className="cursor-pointer hover:bg-primary hover:text-primary-foreground transition-colors"
-                      onClick={() => setSelectedKeyword(kw.text)}
-                    >
-                      {kw.text}
-                    </Badge>
-                  ))}
+          <div className="h-[600px] flex flex-col">
+            <ScrollArea className="flex-1 pr-4">
+              <>
+                {/* Keywords Section */}
+                <div className="mb-6">
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-lg font-semibold">
+                      {t("") || (language === "en" ? "Your Keywords" : "登録キーワード")}
+                    </h3>
+                    <Button onClick={() => setKeywordDialogOpen(true)}>
+                      {t("") || (language === "en" ? "Manage Keywords" : "キーワード管理")}
+                    </Button>
+                  </div>
+                  {keywords.length > 0 ? (
+                    <div className="flex flex-wrap gap-2">
+                      {keywords.map((kw) => (
+                        <Badge
+                          key={kw.id}
+                          variant="secondary"
+                          className="cursor-pointer hover:bg-primary hover:text-primary-foreground transition-colors"
+                          onClick={() => setSelectedKeyword(kw.text)}
+                        >
+                          {kw.text}
+                        </Badge>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-sm text-muted-foreground">
+                      {language === "en" 
+                        ? "No keywords yet. Add some to track topics over time." 
+                        : "キーワードがまだ登録されていません。トピックを時系列で追跡するには追加してください。"}
+                    </p>
+                  )}
                 </div>
-              ) : (
-                <p className="text-sm text-muted-foreground">
-                  {language === "en" 
-                    ? "No keywords yet. Add some to track topics over time." 
-                    : "キーワードがまだ登録されていません。トピックを時系列で追跡するには追加してください。"}
-                </p>
-              )}
-            </div>
 
-            {/* Favorite Articles Section */}
-            <div>
-              <h3 className="text-lg font-semibold mb-4">
-                {t("discover.favoriteArticles") || (language === "en" ? "Saved Articles" : "保存した記事")}
-              </h3>
-              {favoriteNews.length > 0 ? (
-                <div className="space-y-4">
-                  {favoriteNews.map((news) => (
-                    <NewsCard
-                      key={news.id}
-                      {...news}
-                      onClick={() => setSelectedArticle(news)}
-                    />
-                  ))}
+                {/* Favorite Articles Section */}
+                <div className="bg-blue-50/50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-800 rounded-lg p-6 mt-6 min-h-[400px] flex flex-col">
+                  <h3 className="text-lg font-semibold mb-4 text-blue-900 dark:text-blue-100">
+                    {t("") || (language === "en" ? "Saved Articles" : "保存した記事")}
+                  </h3>
+                  <div className="flex-1">
+                    {favoriteNews.length > 0 ? (
+                      <div className="space-y-4">
+                        {favoriteNews.map((news) => (
+                          <NewsCard
+                            key={news.id}
+                            {...news}
+                            onClick={() => setSelectedArticle(news)}
+                          />
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="text-center py-12 h-full flex items-center justify-center">
+                        <p className="text-muted-foreground">
+                          {language === "en" 
+                            ? "No saved articles yet. Save articles by clicking the bookmark icon." 
+                            : "保存した記事がまだありません。ブックマークアイコンをクリックして記事を保存してください。"}
+                        </p>
+                      </div>
+                    )}
+                  </div>
                 </div>
-              ) : (
-                <div className="text-center py-12">
-                  <p className="text-muted-foreground">
-                    {language === "en" 
-                      ? "No saved articles yet. Save articles by clicking the bookmark icon." 
-                      : "保存した記事がまだありません。ブックマークアイコンをクリックして記事を保存してください。"}
-                  </p>
-                </div>
-              )}
-            </div>
-          </>
+              </>
+            </ScrollArea>
+          </div>
         </TabsContent>
       </Tabs>
       

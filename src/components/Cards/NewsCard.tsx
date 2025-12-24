@@ -4,9 +4,12 @@ import { VerificationBadge, VerificationLevel } from "@/components/Badges/Verifi
 import { SourceBadge } from "@/components/Badges/SourceBadge";
 import { C2PABadge } from "@/components/Badges/C2PABadge";
 import { IdeologyBadge, IdeologyData } from "@/components/Badges/IdeologyBadge";
-import { ExternalLink, Clock, TrendingUp } from "lucide-react";
+import { ExternalLink, Clock, TrendingUp, Bookmark } from "lucide-react";
+import { useFavorites } from "@/contexts/FavoritesContext";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface NewsCardProps {
+  id: string;
   title: string;
   summary: string;
   source: string;
@@ -21,6 +24,7 @@ interface NewsCardProps {
 }
 
 export const NewsCard = ({
+  id,
   title,
   summary,
   source,
@@ -33,6 +37,15 @@ export const NewsCard = ({
   imageUrl,
   onClick,
 }: NewsCardProps) => {
+  const { isFavorite, toggleFavorite } = useFavorites();
+  const { language } = useLanguage();
+  const isSaved = isFavorite(id);
+
+  const handleBookmarkClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    toggleFavorite(id);
+  };
+
   return (
     <Card
       className="transition-all hover:shadow-lg cursor-pointer overflow-hidden"
@@ -76,20 +89,38 @@ export const NewsCard = ({
               <Clock className="h-3 w-3" />
               {timestamp}
             </div>
-            {primarySourceUrl && (
+            <div className="flex items-center gap-2">
               <Button
-                variant="ghost"
+                variant={isSaved ? "default" : "ghost"}
                 size="sm"
                 className="gap-2 hover:bg-sky-500 hover:text-white transition-colors"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  window.open(primarySourceUrl, "_blank");
-                }}
+                onClick={handleBookmarkClick}
+                title={isSaved 
+                  ? (language === "en" ? "Remove from saved" : "保存から削除")
+                  : (language === "en" ? "Save article" : "記事を保存")
+                }
               >
-                一次ソース
-                <ExternalLink className="h-3 w-3" />
+                <Bookmark className={`h-3 w-3 ${isSaved ? "fill-current" : ""}`} />
+                {isSaved 
+                  ? (language === "en" ? "Saved" : "保存済み")
+                  : (language === "en" ? "Save" : "保存")
+                }
               </Button>
-            )}
+              {primarySourceUrl && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="gap-2 hover:bg-sky-500 hover:text-white transition-colors"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    window.open(primarySourceUrl, "_blank");
+                  }}
+                >
+                  {language === "en" ? "Source" : "一次ソース"}
+                  <ExternalLink className="h-3 w-3" />
+                </Button>
+              )}
+            </div>
           </CardFooter>
         </div>
       </div>

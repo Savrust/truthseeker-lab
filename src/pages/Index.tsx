@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { Header } from "@/components/Layout/Header";
 import { HeroBanner } from "@/components/Layout/HeroBanner";
 import { TabNavigation } from "@/components/Layout/TabNavigation";
@@ -15,9 +15,17 @@ import { ChevronDown } from "lucide-react";
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState("discover");
+  const [discoverActiveTab, setDiscoverActiveTab] = useState("world");
   const { isSubscribed } = useSubscription();
   const navigate = useNavigate();
+  const location = useLocation();
   const scrollAreaRef = useRef<HTMLDivElement>(null);
+  
+  // Hide testimonials on verify tab, search page, or favorites tab
+  const shouldHideTestimonials = 
+    activeTab === "verify" || 
+    location.pathname === "/search" ||
+    (activeTab === "discover" && discoverActiveTab === "favorites");
 
   const handleArticleClick = () => {
     if (!isSubscribed) {
@@ -46,7 +54,11 @@ const Index = () => {
         <>
           <TabNavigation value={activeTab} onValueChange={setActiveTab} />
           <main>
-            {activeTab === "discover" ? <DiscoverView /> : <VerifyView />}
+            {activeTab === "discover" ? (
+              <DiscoverView onTabChange={setDiscoverActiveTab} />
+            ) : (
+              <VerifyView />
+            )}
           </main>
         </>
       ) : (
@@ -85,7 +97,7 @@ const Index = () => {
         </>
       )}
 
-      <Testimonials />
+      {!shouldHideTestimonials && <Testimonials />}
       <Footer />
     </div>
   );
