@@ -54,10 +54,7 @@ export default function TruthPage() {
                   コロナ・ワクチンの真実は?
                 </h2>
                 
-                <p className="text-sm text-muted-foreground mb-6 leading-relaxed">
-                  本ページは、主要製薬会社（ファイザー/モデルナ）の「有効性・安全性」に関する一次資料・主要報道、および大村智教授（イベルメクチン）関連の見解・報道を、欧米/非欧米・リージョン別の視点から整理し、複数の視点を提示し、証拠の所在を明確化することを目的としています。
-                </p>
-
+               
                 <Separator className="my-6" />
 
                 {/* 多数派 (Majority View) */}
