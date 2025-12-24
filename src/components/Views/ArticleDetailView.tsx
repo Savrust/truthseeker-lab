@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -106,6 +107,17 @@ export const ArticleDetailView = ({ article, onBack }: ArticleDetailViewProps) =
   const { isAuthenticated } = useAuth();
   const { language, t } = useLanguage();
   const { isFavorite, toggleFavorite } = useFavorites();
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [sourceUrl, setSourceUrl] = useState("");
+  const [feedback, setFeedback] = useState("");
+  const [feedbackType, setFeedbackType] = useState<"source" | "error" | "bias">("source");
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    // Demo: Just set submitted state
+    setIsSubmitted(true);
+    // In a real implementation, you would send the data to an API here
+  };
 
   return (
     <div className="container mx-auto px-4 py-6 max-w-6xl">
@@ -473,54 +485,82 @@ export const ArticleDetailView = ({ article, onBack }: ArticleDetailViewProps) =
           <CardTitle>{language === "en" ? "Reader Meta-Review" : "読者メタレビュー"}</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          {/* Selection Type */}
-          
-
-          {/* URL Field */}
-          <div className="space-y-2">
-            <Input 
-              id="sourceUrl"
-              type="url"
-              placeholder={language === "en" ? "https://example.com/source" : "https://example.com/source"} 
-            />
-          </div>
-          {/* Feedback Textarea */}
-          <div className="space-y-2">
-            <Textarea 
-              id="feedback"
-              placeholder={language === "en" ? "Enter your feedback..." : "フィードバックを入力..."} 
-              className="h-[200px] resize-none"
-            />
-          </div>
-          <div>
-            <div className="flex items-center gap-6">
-              <label className="flex items-center gap-2 cursor-pointer">
-                <input type="radio" name="feedbackType" value="source" className="w-4 h-4" defaultChecked />
-                <span>{language === "en" ? "Suggest Source" : "出典提案"}</span>
-              </label>
-              <label className="flex items-center gap-2 cursor-pointer">
-                <input type="radio" name="feedbackType" value="error" className="w-4 h-4" />
-                <span>{language === "en" ? "Report Error" : "誤り指摘"}</span>
-              </label>
-              <label className="flex items-center gap-2 cursor-pointer">
-                <input type="radio" name="feedbackType" value="bias" className="w-4 h-4" />
-                <span>{language === "en" ? "Report Bias" : "バイアス申告"}</span>
-              </label>
+          {!isSubmitted ? (
+            <form onSubmit={handleSubmit} className="space-y-4">
+              {/* URL Field */}
+              <div className="space-y-2">
+                <Input 
+                  id="sourceUrl"
+                  type="url"
+                  value={sourceUrl}
+                  onChange={(e) => setSourceUrl(e.target.value)}
+                  placeholder={language === "en" ? "https://example.com/source" : "https://example.com/source"} 
+                />
+              </div>
+              {/* Feedback Textarea */}
+              <div className="space-y-2">
+                <Textarea 
+                  id="feedback"
+                  value={feedback}
+                  onChange={(e) => setFeedback(e.target.value)}
+                  placeholder={language === "en" ? "Enter your feedback..." : "フィードバックを入力..."} 
+                  className="h-[200px] resize-none"
+                />
+              </div>
+              <div>
+                <div className="flex items-center gap-6">
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input 
+                      type="radio" 
+                      name="feedbackType" 
+                      value="source" 
+                      className="w-4 h-4" 
+                      checked={feedbackType === "source"}
+                      onChange={() => setFeedbackType("source")}
+                    />
+                    <span>{language === "en" ? "Suggest Source" : "出典提案"}</span>
+                  </label>
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input 
+                      type="radio" 
+                      name="feedbackType" 
+                      value="error" 
+                      className="w-4 h-4"
+                      checked={feedbackType === "error"}
+                      onChange={() => setFeedbackType("error")}
+                    />
+                    <span>{language === "en" ? "Report Error" : "誤り指摘"}</span>
+                  </label>
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input 
+                      type="radio" 
+                      name="feedbackType" 
+                      value="bias" 
+                      className="w-4 h-4"
+                      checked={feedbackType === "bias"}
+                      onChange={() => setFeedbackType("bias")}
+                    />
+                    <span>{language === "en" ? "Report Bias" : "バイアス申告"}</span>
+                  </label>
+                </div>
+              </div>
+              {/* Submit Button */}
+              <div className="flex justify-end">
+                <Button type="submit" className="gap-2">
+                  <Send className="h-4 w-4" />
+                  {language === "en" ? "Submit" : "送信"}
+                </Button>
+              </div>
+            </form>
+          ) : (
+            <div className="text-center py-8">
+              <p className="text-sm text-muted-foreground">
+                {language === "en" 
+                  ? "Thank you. Your submission has been received (demo)."
+                  : "ありがとうございます。ご提案を受け付けました（デモ）。"}
+              </p>
             </div>
-          </div>
-          {/* Submit Button */}
-          <div className="flex justify-end">
-            <Button className="gap-2">
-              <Send className="h-4 w-4" />
-              {language === "en" ? "Submit" : "送信"}
-            </Button>
-          </div>
-          
-          <p className="text-xs text-muted-foreground">
-            {language === "en" 
-              ? "Thank you. Your submission has been received (demo)."
-              : "ありがとうございます。ご提案を受け付けました（デモ）。"}
-          </p>
+          )}
         </CardContent>
       </Card>
 
