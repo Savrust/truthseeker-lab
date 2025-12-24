@@ -526,7 +526,7 @@ export const ArticleDetailView = ({ article, onBack }: ArticleDetailViewProps) =
 
       {/* Footer Note */}
       <div className="text-center text-sm text-muted-foreground pb-6">
-        <p>© 2025 The Truth — {language === "en" ? "Static Site Demo" : "静的サイトデモ"}</p>
+        {/* <p>© 2025 The Truth — {language === "en" ? "Static Site Demo" : "静的サイトデモ"}</p> */}
       </div>
     </div>
   );
